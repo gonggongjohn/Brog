@@ -1,16 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Flask-Dropzone Demo: Basic</title>
-  {{ dropzone.load_css() }}
-  {{ dropzone.style('border: 2px dashed #0087F7; margin: 10%; min-height: 400px;') }}
-</head>
-<body>
-  {{ dropzone.create(action='opt.upload') }}
-  {{ dropzone.load_js() }}
-  {{ dropzone.config() }}
-  {# You can get the success response from server like this: #}
-  {#{ dropzone.config(custom_options="success: function(file, response){console.log(response);}") }#}
-</body>
-</html>
+{% extends 'base.html' %}
+{% from 'macros.html' import form_field %}
+
+{% block content %}
+<h2>File Upload Form</h2>
+
+<form method="post" enctype="multipart/form-data">
+    {{ form.csrf_token }}
+    {{ form_field(form.photo) }}
+    {{ form.submit }}
+</form>
+{% endblock %}
