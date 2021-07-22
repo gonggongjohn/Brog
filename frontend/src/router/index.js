@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Sign from '../views/Sign.vue'
+import Dashboard from '../views/Dashboard.vue'
 
 Vue.use(VueRouter)
 
@@ -9,6 +10,11 @@ const routes = [
     path: '/',
     name: 'Sign',
     component: Sign
+  },
+  {
+    path: '/dashboard',
+    name: "DashBoard",
+    component: Dashboard
   },
   {
     path: '/about',
