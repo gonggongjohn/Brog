@@ -57,7 +57,7 @@ export default {
       return protocal_str + "://" + pure_host;
     },
     onLogin(){
-      let url = this.getHostUrl() + ':5000/user/login';
+      let url = this.getHostUrl() + ':5000/user/login/';
       this.axios.post(url, this.login_form).then((response) => {
         if(response.data != undefined){
           if(response.data.status == '200'){
