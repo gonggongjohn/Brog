@@ -2,7 +2,7 @@ from functools import wraps
 from flask import session, request
 from flask.helpers import url_for
 from models import *
-from ..ext import db
+from ext import db
 import json
 
 def login_required(func):

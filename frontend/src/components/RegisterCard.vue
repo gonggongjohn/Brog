@@ -47,7 +47,7 @@ export default {
       return protocal_str + "://" + pure_host;
     },
     onRegister(){
-      let url = this.getHostUrl() + ':5000/register';
+      let url = this.getHostUrl() + ':5000/user/register';
       this.axios.post(url, this.register_form).then((response) => {
         if(response.data != undefined){
           if(response.data.status == '200'){
