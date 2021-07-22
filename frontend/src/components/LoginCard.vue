@@ -6,13 +6,15 @@
         <b-form-group class="row mb-4" id="group-username" label-cols-sm="2" label="用户名：" label-for="input-username">
           <b-form-input id="input-username" v-model="login_form.username" placeholder="请输入用户名" required></b-form-input>
         </b-form-group>
+
         <b-form-group class="row mb-4" id="group-password" label-cols-sm="2" label="密码：" label-for="input-password">
           <b-form-input id="input-password" v-model="login_form.password" placeholder="请输入密码" required></b-form-input>
         </b-form-group>
-        <div>
+
+        <b-form-checkbox v-model="rem_flag" class="mb-3">记住用户名和密码</b-form-checkbox>
+
         <b-button type="submit" size="lg" variant="outline-primary" style="margin-right: 50px">登录</b-button>
         <b-button @click="jumpRegister" size="lg" variant="outline-success">注册账户</b-button>
-        </div>
       </b-form>
     </b-card>
   </div>
@@ -25,8 +27,19 @@ export default {
     return{
       login_form: {
         username: "",
-        password: ""
-      }
+        password: "",
+      },
+      rem_flag: false
+    }
+  },
+  mounted(){
+    let username_tmp = localStorage.getItem("username");
+    let password_tmp = localStorage.getItem("password");
+    if(username_tmp){
+      this.login_form.username = username_tmp;
+    }
+    if(password_tmp){
+      this.login_form.password = password_tmp;
     }
   },
   methods: {
@@ -48,7 +61,10 @@ export default {
       this.axios.post(url, this.login_form).then((response) => {
         if(response.data != undefined){
           if(response.data.status == '200'){
-            console.log(response);
+            if(this.rem_flag){
+              localStorage.setItem("username", this.login_form.username);
+              localStorage.setItem("password", this.login_form.password);
+            }
           }
         }
       })
