@@ -65,6 +65,7 @@ export default {
               localStorage.setItem("username", this.login_form.username);
               localStorage.setItem("password", this.login_form.password);
             }
+            this.$router.push('/dashboard');
           }
         }
       })

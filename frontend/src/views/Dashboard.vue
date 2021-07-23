@@ -16,7 +16,7 @@
       </b-nav>
     </b-card>
 
-    <component :is="component_show" class="col"></component>
+    <component :is="component_show" @change="onChangePage" class="col"></component>
   </div>
 </template>
 
@@ -39,6 +39,11 @@ export default {
     },
     onSwitchCommunity(){
       this.component_show = CommunityPage;
+    },
+    onChangePage(value){
+      if(value == "community"){
+        this.component_show = CommunityPage;
+      }
     }
   }
 }
