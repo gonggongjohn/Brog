@@ -8,12 +8,12 @@
             <button @click="checkLocal">点击一下</button>
         </div>
         <!--服务器-->
-        <div style="margin-top: 30px">
+        <!-- <div style="margin-top: 30px">
             <p>服务器</p>
             <button @click="checkError">查看错误</button>
             <button @click="checkNormal">查看有效</button>
             <button @click="checkSuccess">查看服务器跨域返回流</button>
-        </div>
+        </div> -->
         <!--上传文件-->
         <div style="margin-top: 40px">
             <input type="file" name="myfile" id="myfile" @change="preview($event)"/>
