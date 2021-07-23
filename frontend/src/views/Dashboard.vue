@@ -1,7 +1,13 @@
 <template>
   <div class="row">
     <b-navbar type="light">
-      <h3>Navbar</h3>
+      <img alt="brog logo" src="../assets/logo.png" style="max-width: 60px">
+      <h3>书蛙</h3>
+
+      <b-navbar-nav class="ml-auto">
+        <b-nav-item-dropdown text="我的" right>
+        </b-nav-item-dropdown>
+      </b-navbar-nav>
     </b-navbar>
     <b-card no-body class="col-3">
       <b-nav vertical tabs>

@@ -2,7 +2,7 @@
   <div class="container">
     <h3>我的书架</h3>
     <b-button @click="onAddBook" variant="outline-success">添加书籍</b-button>
-    <div class="row row-cols-3">
+    <div class="row row-cols-3" style="margin-top: 3%">
       <div class="container" v-for="(book_item, index) in book_list" :key="book_item.name">
         <b-card>
           <h3>{{book_item.name}}</h3>
@@ -20,12 +20,15 @@ export default {
     return{
       book_list: [
         {
+          uuid: 1,
           name: "1234"
         },
         {
+          uuid: 2,
           name: "5678"
         },
         {
+          uuid: 3,
           name: "2351"
         }
       ]
@@ -50,6 +53,9 @@ export default {
     },
     onAddBook(){
       this.$router.push('/library');
+    },
+    onReadingBook(index){
+      this.$router.push({path: '/reader', query: {uuid: this.book_list[index].uuid}});
     }
   }
 }

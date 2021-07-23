@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Sign from '../views/Sign.vue'
 import Dashboard from '../views/Dashboard.vue'
+import Reader from '../views/Reader.vue'
 
 Vue.use(VueRouter)
 
@@ -15,6 +16,11 @@ const routes = [
     path: '/dashboard',
     name: "DashBoard",
     component: Dashboard
+  },
+  {
+    path: '/reader',
+    name: "Reader",
+    component: Reader
   },
   {
     path: '/about',
