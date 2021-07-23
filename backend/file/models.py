@@ -9,3 +9,4 @@ class File(db.Model):
                 autoincrement=True)
     
     contributer = Column(Integer,ForeignKey('user.id', onupdate='CASCADE', ondelete='SET NULL'),nullable=True)
+    filename = Column(String(100))
