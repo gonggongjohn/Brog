@@ -1,9 +1,10 @@
 from flask.blueprints import Blueprint
 from flask\
-    import request, session
+    import request, session, make_response
 import json
 from models import *
 from sqlalchemy import and_, or_
+from random import choices
 
 bp = Blueprint(
     name='user',
@@ -13,14 +14,6 @@ bp = Blueprint(
     url_prefix='/user'
 )
 
-'''
-@bp.after_request
-def after_request(response):
-    response.headers['Access-Control-Allow-Origin'] = '*'
-    response.headers['Access-Control-Allow-Methods'] = 'GET,POST'
-    response.headers['Access-Control-Allow-Headers'] = 'x-requested-with,content-type'
-    return response
-'''
 
 @bp.route('/login/', methods=["POST", "OPTIONS"])
 def login():
@@ -42,7 +35,7 @@ def login():
     session.update({
         'user_id': user_obj.id,
         'token': user_obj.token,
-        'ip':user_obj.ip
+        'ip':user_obj.ip,
     })
     session.modified = True
     return json.dumps({'status': 200, })
@@ -57,18 +50,23 @@ def register():
     user_obj = User(
         name=data['username'],
         pwd=data['password'],
-        ip=request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
+        ip=request.environ.get('HTTP_X_REAL_IP', request.remote_addr),
+        id=''.join(choices(string.ascii_letters + string.digits, k=50))
     )
-    try:
-        db.session.add(user_obj)
-        session.update({
-            'user_id': user_obj.id,
-            'token': user_obj.token,
-            'ip':user_obj.ip,
-        })
-        session.modified = True
-        db.session.commit()
-        return json.dumps({'status': 200, })
-    except:
-        db.session.rollback()
-        return json.dumps({'status': 404, })
+    if db.session.query(User).filter_by(name=user_obj.name).first():
+        return json.dumps({'status': 404}), 200
+    while True:
+        try:
+            db.session.add(user_obj)
+            db.session.commit()
+            break
+        except:
+            db.session.rollback()
+            user_obj.id = ''.join(choices(string.ascii_letters + string.digits, k=50))
+    session.update({
+        'user_id': user_obj.id,
+        'token': user_obj.token,
+        'ip':user_obj.ip,
+    })
+    session.modified = True
+    return json.dumps({'status': 200}), 200

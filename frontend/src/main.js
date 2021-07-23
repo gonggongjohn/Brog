@@ -8,13 +8,15 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 
+axios.defaults.withCredentials = true
+
 Vue.use(BootstrapVue)
 Vue.use(VueAxios, axios)
 
 Vue.config.productionTip = false
 
 new Vue({
-  router,
-  store,
-  render: h => h(App)
+    router,
+    store,
+    render: h => h(App)
 }).$mount('#app')

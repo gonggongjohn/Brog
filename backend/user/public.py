@@ -9,8 +9,8 @@ def login_required(func):
     @wraps(func)
     def inner(*args, **kwargs):
         ip=request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
-        if ip != session.get('ip'):
-            return json.dumps({'status': 404, 'reason': 'unauthorized user',}), 404
+        if ip == session.get('ip'):
+            return func(*args, **kwargs)
         if db.session.query(User).filter_by(
             id=session.get('user_id'),
             token=session.get('token')
