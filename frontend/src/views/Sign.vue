@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <img alt="brog logo" src="../assets/logo.png" class="mb-4" style="max-width: 100px">
+  <div class="container">
+    <img alt="brog logo" src="../assets/logo.png" class="mb-4" style="max-width: 100px; margin-top: 5%">
     <component :is="component_show" @change="onChangeComponent"></component>
   </div>
 </template>

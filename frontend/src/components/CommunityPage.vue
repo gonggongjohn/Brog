@@ -7,7 +7,7 @@
 
 <script>
 export default {
-  name: 'ResourcePage',
+  name: 'CommunityPage',
   data() {
     return{
       upload_file: null
@@ -31,7 +31,6 @@ export default {
       return protocal_str + "://" + pure_host;
     },
     onUploadFile(){
-      console.log(this.upload_file);
       var url = this.getHostUrl() + ':5000/file/upload/';
       var form = new FormData();
       form.append('file', this.upload_file);
