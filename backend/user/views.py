@@ -26,9 +26,9 @@ def login():
     user_obj = user_obj_qset.first()
     if not user_obj:
         return json.dumps({'status': 404, })
-    user_obj_qset.update(
-        ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
-    )
+    user_obj_qset.update({
+        User.ip : request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
+    }, synchronize_session='evaluate')
     db.session.commit()
     session.update({
         'user_id': user_obj.id,

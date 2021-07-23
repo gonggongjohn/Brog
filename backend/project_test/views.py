@@ -31,4 +31,4 @@ def add_user(name, pwd):
 
 @bp.route('/see/user/')
 def see_user():
-    return "".join(['<p>(%s, %s)</p>'%(x.name, x.pwd) for x in db.session.query(User).all()])
+    return "".join(['<p>(%s, %s, %s)</p>'%(x.name, x.pwd, x.token) for x in db.session.query(User).all()])
