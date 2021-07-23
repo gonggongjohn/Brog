@@ -52,7 +52,7 @@ export default {
       return protocal_str + "://" + pure_host;
     },
     onAddBook(){
-      this.$router.push('/library');
+      this.$emit('change', 'community');
     },
     onReadingBook(index){
       this.$router.push({path: '/reader', query: {uuid: this.book_list[index].uuid}});
