@@ -28,3 +28,7 @@ def add_user(name, pwd):
     db.session.add(User(name=name, pwd=pwd, ip=request.environ.get('HTTP_X_REAL_IP', request.remote_addr)))
     db.session.commit()
     return 'New User: (username: %s, password: %s, @: %s)'%(name, pwd, request.environ.get('HTTP_X_REAL_IP', request.remote_addr)), 200
+
+@bp.route('/see/user/')
+def see_user():
+    return "".join(['<p>(%s, %s)</p>'%(x.name, x.pwd) for x in db.session.query(User).all()])

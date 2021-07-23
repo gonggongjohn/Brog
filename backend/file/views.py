@@ -30,18 +30,25 @@ def tags():
 @bp.route('/upload/', methods=["POST"])
 @user.public.login_required
 def upload():
+    success, failure = 0, 0
     for x in request.files:
-        x = request.files[x]
-        if x.filename.split('.')[-1] not in ALLOWED_SUFFIX:
+        y = request.files[x]
+        if y.filename.split('.')[-1] not in ALLOWED_SUFFIX:
             return json.dumps({'status': 500, 'reason': 'invalid file suffix', })
-        x.filename = secure_filename(x.filename)
+        y.filename = secure_filename(y.filename)
         sql_file = File(
             contributer=session['user_id'],
-            filename=x.filename
+            filename=y.filename
         )
         db.session.add(sql_file)
-        x.save(
-            os.path.join(FILE_DIR, '(' + sql_file.id + ')' + x.filename),
-            buffer_size=512
-        )
-    return json.dumps({'status': 200, })
+        try:
+            db.session.commit()
+            y.save(
+                os.path.join(FILE_DIR, '(' + sql_file.id + ')-' + y.filename),
+                buffer_size=512
+            )
+            success += 1
+        except:
+            db.session.rollback()
+            failure += 1
+    return json.dumps({'status': 200, 'success': success, 'failure': failure, })

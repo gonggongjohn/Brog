@@ -23,12 +23,13 @@ def login():
         name=data["username"],
         pwd=data["password"]
     )
-    user_obj_qset.update(
-        ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
-    )
     user_obj = user_obj_qset.first()
     if not user_obj:
         return json.dumps({'status': 404, })
+    user_obj_qset.update(
+        ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
+    )
+    db.session.commit()
     session.update({
         'user_id': user_obj.id,
         'token': user_obj.token,

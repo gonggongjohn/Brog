@@ -5,8 +5,21 @@
 末尾必须加'/', 否则请求会失败
 ### user/
 #### login/
-用户登录, 包含信息为username和password
-#### 
+用户登录, 需要包含的信息为username和password, 用json格式的字符串传输
+
+#### register/
+
+用户注册, 需要包含的信息为username和password, 用json格式的字符串传输
+
+### test/
+
+#### add/user/\<username\>/\<password\>
+
+在后端域名下访问该接口可以直接添加用户, 比如要添加用户名为tourist, 密码为peters的用户则应该输入
+
+请求url: 服务器域名/test/add/user/tourist/peters/ 
+
+即可添加用户
 
 ## 运行环境和启动说明
 ### mysql
