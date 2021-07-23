@@ -1,6 +1,8 @@
 # Backend Repository
 
 ## 接口说明
+### 接口规范
+末尾必须加'/', 否则请求会失败
 ### user/
 #### login/
 用户登录, 包含信息为username和password

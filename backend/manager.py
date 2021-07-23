@@ -1,12 +1,11 @@
 from flask import Flask
 from flask.blueprints import Blueprint
-from flask_sqlalchemy import SQLAlchemy
 from models import *
 from ext import *
 import settings
+from typing import List
 
-
-def create_app(blueprints: list[Blueprint], recreate_tables=False) -> Flask:
+def create_app(blueprints: List[Blueprint], recreate_tables=False) -> Flask:
     app = Flask(__name__)
     app.config.from_object(settings)
     db.init_app(app)

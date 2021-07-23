@@ -1,11 +1,11 @@
 from flask.blueprints import Blueprint
-from flask\
-    import request, session
+from flask import request, session
 from werkzeug.utils import secure_filename
 import json
 from user.models import *
 import user.public
 from file.public import *
+from file.models import *
 import os
 
 ALLOWED_SUFFIX = ['pdf', 'txt']
@@ -34,8 +34,14 @@ def upload():
         x = request.files[x]
         if x.filename.split('.')[-1] not in ALLOWED_SUFFIX:
             return json.dumps({'status': 500, 'reason': 'invalid file suffix', })
-        request.files['file'].save(
-            os.path.join(FILE_DIR, secure_filename(x.filename)),
+        x.filename = secure_filename(x.filename)
+        sql_file = File(
+            contributer=session['user_id'],
+            filename=x.filename
+        )
+        db.session.add(sql_file)
+        x.save(
+            os.path.join(FILE_DIR, '(' + sql_file.id + ')' + x.filename),
             buffer_size=512
         )
     return json.dumps({'status': 200, })
