@@ -18,7 +18,7 @@
         <div style="margin-top: 40px">
             <input type="file" name="myfile" id="myfile" @change="preview($event)"/>
             <!--<button @click="changeLocal">点击预览本地pdf</button>-->
-            <iframe v-if="showPdf" id='previewPdf' :src="'/static/pdf/web/viewer.html?file=' + fileUrl" height="560"
+            <iframe v-if="showPdf" id='previewPdf' :src="'/pdf/web/viewer.html?file=' + fileUrl" height="560"
                     width="100%">
             </iframe>
         </div>
@@ -50,26 +50,27 @@
         },
         methods: {
             check() {
-                window.open('/static/pdf/web/viewer.html')
+                // window.open('/static/pdf/web/viewer.html')
+                window.open('/pdf/web/viewer.html')
             },
             checkLocal() {
 //          let url = '/static/pdf/web/demo.pdf'
                 let url = 'demo.pdf'
-                window.open('/static/pdf/web/viewer.html?file=' + url)
+                window.open('/pdf/web/viewer.html?file=' + url)
             },
             checkError() {
                 let url = 'http://somedomain/doc/manuals/R-intro.pdf' // 报错跨域
-                window.open('/static/pdf/web/viewer.html?file=' + url)
+                window.open('/pdf/web/viewer.html?file=' + url)
             },
             checkNormal() {
                 let url = 'http://image.cache.timepack.cn/nodejs.pdf'  // 有效 服务器配置跨域处理
-                window.open('/static/pdf/web/viewer.html?file=' + url)
+                window.open('/pdf/web/viewer.html?file=' + url)
             },
             checkSuccess() {
                 // 后台返回流的形式，也是我本人项目的使用
                 let url = 'https://dluat.hscf.com/api/esm/v1/contractTemplates/load/c08def54aa40412b8b511406fc0271d2/0?access_token=ea19dc0de8801b389ed5099a2297161d&name=cehsi.pdf'
                 // 当然上面的是可以的，但是此access_token 是有时效性的，只是放在这边当作个例子，至于最后我为什么加了个测试.pdf 是可以在浏览器标签叶上显示
-                window.open('/static/pdf/web/viewer.html?file=' + encodeURIComponent(url))
+                window.open('/pdf/web/viewer.html?file=' + encodeURIComponent(url))
             },
             // 这是打开本地文件进行预览
             preview(event) {
