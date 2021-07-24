@@ -40,7 +40,7 @@ def upload():
         y = request.files[x]
         if y.filename.split('.')[-1] not in ALLOWED_SUFFIX:
             return json.dumps({'status': 500, 'reason': 'invalid file suffix', })
-        y.filename = secure_filename(y.filename)
+        y.filename = y.filename.replace(' ', '_')
         while True:
             try:
                 sql_file = File(
@@ -63,13 +63,17 @@ def upload():
     return json.dumps({'status': 200, 'success': success, 'crash': crash, }), 200
 
 
-@bp.route('/list_all/', methods=["POST", "OPTIONS"])
+@bp.route('/list_all/', methods=["POST", "OPTIONS", "GET"])
 @user.public.login_required
 def list_all():
-    return json.dumps(map(lambda x: {"id": x.id, "filename": x.name, "contributer": x.contributer, }, db.session.query(File).all())), 200
+    return json.dumps(list(map(lambda x: {
+        "id": x.id, 
+        "filename": x.filename, 
+        "contributer": db.session.query(User).filter_by(id=x.contributer).first().name, 
+    }, db.session.query(File).all()))), 200
 
 
-@bp.route('/list_collection/', methods=["POST", "OPTIONS"])
+@bp.route('/list_collection/', methods=["POST", "OPTIONS", "GET"])
 @user.public.login_required
 def list_collection():
     return json.dumps([]), 200

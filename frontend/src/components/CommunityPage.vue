@@ -55,14 +55,15 @@ export default {
     getBookList(){
       var url = this.getHostUrl() + ':5000/file/list_all/';
       this.axios.get(url).then((response) => {
-        if(response.data && response.data.status == "200"){
-          var book_list_tmp = response.data.result;
+        if(response.data && response.status == 200){
+          var book_list_tmp = response.data;
           book_list_tmp.forEach((book) => {
             this.book_list.push({
               uuid: book.id,
               name: book.filename,
               contributor: book.contributor
             });
+            console.log(book);
           });
         }
       })
