@@ -35,21 +35,38 @@ export default {
     }
   },
   mounted(){
-    
+    this.getBookCollections();
   },
   methods: {
     getHostUrl(){
       let full_path = window.document.location.href;
-      let protocal_index = full_path.indexOf("://");
-      let protocal_str = full_path.substring(0, protocal_index);
-      let full_path_stripped = full_path.substring(protocal_index + 3);
+      let protocol_index = full_path.indexOf("://");
+      let protocol_str = full_path.substring(0, protocol_index);
+      let full_path_stripped = full_path.substring(protocol_index + 3);
       let router_path =  this.$route.path;
       let host_index = full_path_stripped.indexOf(router_path);
       let full_host = full_path_stripped.substring(0, host_index);
       console.log(full_path);
       let pred_index = full_host.lastIndexOf(":");
       let pure_host = full_host.substring(0, pred_index);
-      return protocal_str + "://" + pure_host;
+      return protocol_str + "://" + pure_host;
+    },
+    getBookCollections(){
+      var url = this.getHostUrl() + ":5000/file/list_collection";
+      this.axios.get(url).then((response) => {
+        if(response.data && response.status == 200){
+          var book_list_tmp = response.data;
+          book_list_tmp.forEach((book) => {
+            this.book_list.push({
+              uuid: book.id,
+              name: book.filename
+            });
+          });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
     },
     onAddBook(){
       this.$emit('change', 'community');
