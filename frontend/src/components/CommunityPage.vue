@@ -53,7 +53,7 @@ export default {
       return protocal_str + "://" + pure_host;
     },
     getBookList(){
-      var url = this.getHostUrl + ':5000/file/list_all/';
+      var url = this.getHostUrl() + ':5000/file/list_all/';
       this.axios.get(url).then((response) => {
         if(response.data && response.data.status == "200"){
           var book_list_tmp = response.data.result;
