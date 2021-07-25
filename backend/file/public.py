@@ -1,4 +1,5 @@
 import os
+import asyncio
 
 FILE_DIR = os.path.join(os.path.dirname(__file__), 'files')
 print('store all uploaded files at: %s' % FILE_DIR)
@@ -9,5 +10,4 @@ def read_xml(filename):
 
 SCRIPT_DIR = os.path.join(os.path.dirname(__file__), 'pdf2txt.py')
 def pdf_to_xml(pdf_path, xml_path):
-    shell_str = 'python %s -o %s %s'%(SCRIPT_DIR, xml_path, pdf_path)
-    os.system(shell_str)
+    return lambda: os.system('python %s -o %s %s'%(SCRIPT_DIR, xml_path, pdf_path))

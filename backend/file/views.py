@@ -1,7 +1,6 @@
 from flask.blueprints import Blueprint
 from flask import request, session
 
-from werkzeug.utils import secure_filename
 import json
 
 import user.public
@@ -13,7 +12,10 @@ from file.public import *
 import os
 from random import choices
 
-ALLOWED_SUFFIX = ['pdf', 'txt']
+from concurrent.futures import ThreadPoolExecutor
+executor = ThreadPoolExecutor()
+
+ALLOWED_SUFFIX = ['pdf',]
 
 bp = Blueprint(
     name='file',
@@ -59,7 +61,7 @@ def upload():
         xml_path = os.path.join(FILE_DIR, "xml", '(%s)-%s' %
                                (sql_file.id, sql_file.filename.removesuffix(".pdf") + ".xml"))
         y.save(pdf_path, buffer_size=512)
-        pdf_to_xml(pdf_path, xml_path)
+        executor.submit(pdf_to_xml(pdf_path, xml_path))
     return json.dumps({'status': 200, 'success': success, 'crash': crash, }), 200
 
 
