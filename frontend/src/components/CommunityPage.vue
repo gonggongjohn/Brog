@@ -88,8 +88,8 @@ export default {
       });
     },
     onAddToShelf(index){
-      let url = this.getHostUrl() + ':5000/file/add/';
-      var payload = {id: this.book_list[index].uuid};
+      let url = this.getHostUrl() + ':5000/file/add_collection/';
+      var payload = JSON.stringify({book_id: this.book_list[index].uuid});
       this.axios.post(url, payload).then((response) => {
         if(response.data != undefined){
           if(response.data.status == '200'){

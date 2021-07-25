@@ -69,4 +69,4 @@ def register():
         'ip':user_obj.ip,
     })
     session.modified = True
-    return json.dumps({'status': 200}), 200
+    return json.dumps({'status': 200, }), 200
