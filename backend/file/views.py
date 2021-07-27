@@ -3,6 +3,8 @@ from flask import request, session
 
 import json
 
+from flask.wrappers import Response
+
 import user.public
 from user.models import *
 
@@ -15,7 +17,7 @@ from random import choices
 from concurrent.futures import ThreadPoolExecutor
 executor = ThreadPoolExecutor()
 
-ALLOWED_SUFFIX = ['pdf',]
+ALLOWED_SUFFIX = ['pdf', ]
 
 bp = Blueprint(
     name='file',
@@ -55,11 +57,12 @@ def upload():
                 break
             except:
                 db.session.rollback()
-                sql_file.id = ''.join(choices(string.ascii_letters + string.digits, k=50))
+                sql_file.id = ''.join(
+                    choices(string.ascii_letters + string.digits, k=50))
         pdf_path = os.path.join(FILE_DIR, "pdf", '(%s)-%s' %
-                               (sql_file.id, sql_file.filename))
+                                (sql_file.id, sql_file.filename))
         xml_path = os.path.join(FILE_DIR, "xml", '(%s)-%s' %
-                               (sql_file.id, sql_file.filename.removesuffix(".pdf") + ".xml"))
+                                (sql_file.id, sql_file.filename.removesuffix(".pdf") + ".xml"))
         y.save(pdf_path, buffer_size=512)
         executor.submit(pdf_to_xml(pdf_path, xml_path))
     return json.dumps({'status': 200, 'success': success, 'crash': crash, }), 200
@@ -85,6 +88,7 @@ def list_collection():
 
 
 @bp.route('/add_collection/', methods=["GET", "POST", "OPTIONS"])
+@user.public.login_required
 def add_collection():
     data = json.loads(request.get_data(as_text=True))
     book_id = data["book_id"]
@@ -105,3 +109,32 @@ def add_collection():
             collection_obj.id = ''.join(
                 choices(string.ascii_letters + string.digits, k=80))
     return json.dumps({"status": 200, }), 200
+
+
+@bp.route('/get_pdf/', methods=["GET", "POST", "OPTIONS"])
+@user.public.login_required
+def get_pdf():
+    data = json.loads(request.get_data(as_text=True))
+    book_id = data["book_id"]
+    book_filename = db.session.query(File).filter_by(
+        file_id=book_id).first().filename
+    def read(path):
+        with open(path, "rb") as f:
+            if f: yield f.read(512)
+    book_path = os.path.join(FILE_DIR, "pdf", "(%s)-%s" % (book_id, book_filename))
+    return Response(read(book_path), content_type="application/octet-stream")
+
+
+@bp.route('/get_xml/', methods=["GET", "POST", "OPTIONS"])
+@user.public.login_required
+def get_xml():
+    data = json.loads(request.get_data(as_text=True))
+    book_id = data["book_id"]
+    book_filename = db.session.query(File).filter_by(
+        file_id=book_id).first().filename.removesuffix(".pdf") + ".xml"
+    def read(path):
+        with open(path, "rb") as f:
+            if f: yield f.read(512)
+    book_path = os.path.join(FILE_DIR, "xml", "(%s)-%s" % (book_id, book_filename))
+    return Response(read(book_path), content_type="application/octet-stream")
+
