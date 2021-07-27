@@ -1,11 +1,14 @@
 <template>
   <div class="row">
-    <canvas v-for="page in pages" :id="'canvas' + page" :key="page"></canvas>
+    <div ref="main_reader">
+    </div>
+    <div ref="ref_reader">
+    </div>
   </div>
 </template>
 
 <script>
-import * as PDFJS from 'pdfjs-dist/webpack'
+
 export default {
   name: 'Reader',
   data(){
@@ -19,7 +22,7 @@ export default {
   mounted() {
     this.uuid = this.$route.query.uuid;
     this.pdf_url = this.getHostUrl() + ':5000/reader/' + this.uuid + '.pdf';
-    this.loadPdf(this.pdf_url);
+    //this.loadPdf(this.pdf_url);
   },
   methods: {
     getHostUrl(){
@@ -35,6 +38,7 @@ export default {
       let pure_host = full_host.substring(0, pred_index);
       return protocol_str + "://" + pure_host;
     },
+    /*
     loadPdf(pdf_url){
       let that = this;
       PDFJS.getDocument(pdf_url).promise.then((pdf) => {
@@ -64,6 +68,7 @@ export default {
         }
       });
     }
+    */
   }
 }
 </script>

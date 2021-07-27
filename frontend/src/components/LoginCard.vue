@@ -67,6 +67,12 @@ export default {
             }
             this.$router.push('/dashboard');
           }
+          else{
+            alert("登录失败！");
+          }
+        }
+        else{
+          alert("服务器返回错误！");
         }
       })
       .catch((error) => {
