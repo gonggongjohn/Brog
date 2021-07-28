@@ -1,3 +1,4 @@
+import logging
 from flask.blueprints import Blueprint
 from flask\
     import request, session, make_response
@@ -29,13 +30,13 @@ def login():
     if not user_obj:
         return json.dumps({'status': 404, })
     user_obj_qset.update({
-        User.ip : request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
+        User.ip: request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
     }, synchronize_session='evaluate')
     db.session.commit()
     session.update({
         'user_id': user_obj.id,
         'token': user_obj.token,
-        'ip':user_obj.ip,
+        'ip': user_obj.ip,
     })
     session.modified = True
     return json.dumps({'status': 200, })
@@ -54,7 +55,7 @@ def register():
         id=''.join(choices(string.ascii_letters + string.digits, k=50))
     )
     if db.session.query(User).filter_by(name=user_obj.name).first():
-        return json.dumps({'status': 404}), 200
+        return json.dumps({'status': 404, }), 200
     while True:
         try:
             db.session.add(user_obj)
@@ -62,11 +63,12 @@ def register():
             break
         except:
             db.session.rollback()
-            user_obj.id = ''.join(choices(string.ascii_letters + string.digits, k=50))
+            user_obj.id = ''.join(
+                choices(string.ascii_letters + string.digits, k=50))
     session.update({
         'user_id': user_obj.id,
         'token': user_obj.token,
-        'ip':user_obj.ip,
+        'ip': user_obj.ip,
     })
     session.modified = True
     return json.dumps({'status': 200, }), 200

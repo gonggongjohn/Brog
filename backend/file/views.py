@@ -114,8 +114,11 @@ def add_collection():
 @bp.route('/get_pdf/', methods=["GET", "POST", "OPTIONS"])
 @user.public.login_required
 def get_pdf():
-    data = json.loads(request.get_data(as_text=True))
-    book_id = data["book_id"]
+    try:
+        data = json.loads(request.get_data(as_text=True))
+        book_id = data["book_id"]
+    except:
+        book_id = request.values("book_id")
     book_filename = db.session.query(File).filter_by(
         file_id=book_id).first().filename
     def read(path):
