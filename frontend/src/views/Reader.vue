@@ -1,7 +1,9 @@
 <template>
   <div class="row">
     <div ref="main_reader">
-      <canvas v-for="page in pageNum" :id="'canvas' + page" :key="page"></canvas>
+      <b-card no-body class="col-6">
+              <canvas v-for="page in pageNum" :id="'canvas' + page" :key="page"></canvas>
+      </b-card>
     </div>
     <div ref="ref_reader">
       
@@ -65,7 +67,9 @@ export default {
           viewport: viewport,
         }
         page.render(renderContext);
-        if (that.pages > page_num) {
+        console.log(page_num)
+
+        if (that.pageNum > page_num) {
           that.renderPage(page_num + 1)
         }
       });
