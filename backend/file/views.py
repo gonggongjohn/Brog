@@ -4,6 +4,7 @@ from flask import request, session
 import json
 
 from flask.wrappers import Response
+from werkzeug.utils import send_file, send_from_directory
 
 import user.public
 from user.models import *
@@ -121,13 +122,24 @@ def get_pdf():
     book_filename = db.session.query(File).filter_by(
         id=book_id).first().filename
 
-    def read(path):
-        with open(path, "rb") as f:
-            if f:
-                yield f.read(512)
-    book_path = os.path.join(FILE_DIR, "pdf", "(%s)-%s" %
-                             (book_id, book_filename))
-    return Response(read(book_path), content_type="application/octet-stream", headers={"Content-Disposition": "attachment", })
+    return send_file(
+        path_or_file=os.path.join(FILE_DIR, "pdf", "(%s)-%s" % (book_id, book_filename)),
+        as_attachment=True,
+        download_name=book_filename,
+        environ=request.environ
+    )
+
+    # book_path = os.path.join(FILE_DIR, "pdf", "(%s)-%s" %
+    #                          (book_id, book_filename))
+    # def read(path):
+    #     with open(path, "rb") as f:
+    #         if f:
+    #             yield f.read(512)
+    # return Response(
+    #     response=read(book_path),
+    #     content_type="application/octet-stream",
+    #     mimetype="text/application"
+    # )
 
 
 @bp.route('/get_xml/', methods=["GET", "POST", "OPTIONS"])
@@ -141,10 +153,17 @@ def get_xml():
     book_filename = db.session.query(File).filter_by(
         id=book_id).first().filename.removesuffix("pdf") + "xml"
 
-    def read(path):
-        with open(path, "rb") as f:
-            if f:
-                yield f.read(512)
-    book_path = os.path.join(FILE_DIR, "xml", "(%s)-%s" %
-                             (book_id, book_filename))
-    return Response(read(book_path), content_type="application/octet-stream", headers={"Content-Disposition": "attachment", })
+    return send_file(
+        path_or_file=os.path.join(FILE_DIR, "pdf", "(%s)-%s" % (book_id, book_filename)),
+        as_attachment=True,
+        download_name=book_filename,
+        environ=request.environ
+    )
+
+    # def read(path):
+    #     with open(path, "rb") as f:
+    #         if f:
+    #             yield f.read(512)
+    # book_path = os.path.join(FILE_DIR, "xml", "(%s)-%s" %
+    #                          (book_id, book_filename))
+    # return Response(read(book_path), content_type="application/octet-stream", headers={"Content-Disposition": "attachment", })
