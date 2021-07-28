@@ -112,32 +112,39 @@ def add_collection():
 
 
 @bp.route('/get_pdf/', methods=["GET", "POST", "OPTIONS"])
-@user.public.login_required
 def get_pdf():
     try:
         data = json.loads(request.get_data(as_text=True))
         book_id = data["book_id"]
     except:
-        book_id = request.values("book_id")
+        book_id = request.values.get("book_id")
     book_filename = db.session.query(File).filter_by(
-        file_id=book_id).first().filename
+        id=book_id).first().filename
+
     def read(path):
         with open(path, "rb") as f:
-            if f: yield f.read(512)
-    book_path = os.path.join(FILE_DIR, "pdf", "(%s)-%s" % (book_id, book_filename))
-    return Response(read(book_path), content_type="application/octet-stream")
+            if f:
+                yield f.read(512)
+    book_path = os.path.join(FILE_DIR, "pdf", "(%s)-%s" %
+                             (book_id, book_filename))
+    return Response(read(book_path), content_type="application/octet-stream", headers={"Content-Disposition": "attachment", })
 
 
 @bp.route('/get_xml/', methods=["GET", "POST", "OPTIONS"])
 @user.public.login_required
 def get_xml():
-    data = json.loads(request.get_data(as_text=True))
-    book_id = data["book_id"]
+    try:
+        data = json.loads(request.get_data(as_text=True))
+        book_id = data["book_id"]
+    except:
+        book_id = request.values.get("book_id")
     book_filename = db.session.query(File).filter_by(
-        file_id=book_id).first().filename.removesuffix(".pdf") + ".xml"
+        id=book_id).first().filename.removesuffix("pdf") + "xml"
+
     def read(path):
         with open(path, "rb") as f:
-            if f: yield f.read(512)
-    book_path = os.path.join(FILE_DIR, "xml", "(%s)-%s" % (book_id, book_filename))
-    return Response(read(book_path), content_type="application/octet-stream")
-
+            if f:
+                yield f.read(512)
+    book_path = os.path.join(FILE_DIR, "xml", "(%s)-%s" %
+                             (book_id, book_filename))
+    return Response(read(book_path), content_type="application/octet-stream", headers={"Content-Disposition": "attachment", })
