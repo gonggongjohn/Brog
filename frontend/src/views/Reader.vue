@@ -1,13 +1,16 @@
 <template>
   <div class="row">
     <div ref="main_reader">
+      <canvas v-for="page in pageNum" :id="'canvas' + page" :key="page"></canvas>
     </div>
     <div ref="ref_reader">
+      
     </div>
   </div>
 </template>
 
 <script>
+import * as PDFJS from 'pdfjs-dist/webpack'
 
 export default {
   name: 'Reader',
@@ -21,8 +24,8 @@ export default {
   },
   mounted() {
     this.uuid = this.$route.query.uuid;
-    this.pdf_url = this.getHostUrl() + ':5000/reader/' + this.uuid + '.pdf';
-    //this.loadPdf(this.pdf_url);
+    this.pdf_url = this.getHostUrl() + ':5000/file/get_pdf?book_id=' + this.uuid;
+    this.loadPdf(this.pdf_url);
   },
   methods: {
     getHostUrl(){
@@ -38,7 +41,6 @@ export default {
       let pure_host = full_host.substring(0, pred_index);
       return protocol_str + "://" + pure_host;
     },
-    /*
     loadPdf(pdf_url){
       let that = this;
       PDFJS.getDocument(pdf_url).promise.then((pdf) => {
@@ -68,7 +70,6 @@ export default {
         }
       });
     }
-    */
   }
 }
 </script>

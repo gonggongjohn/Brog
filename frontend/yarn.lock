@@ -5231,7 +5231,7 @@
     "json5" "^0.5.0"
     "object-assign" "^4.0.1"
 
-"loader-utils@^1.0.2", "loader-utils@^1.1.0", "loader-utils@^1.2.3", "loader-utils@^1.4.0":
+"loader-utils@^1.0.0", "loader-utils@^1.0.2", "loader-utils@^1.1.0", "loader-utils@^1.2.3", "loader-utils@^1.4.0":
   "integrity" "sha1-xXm140yzSxp07cbB+za/o3HVphM="
   "resolved" "https://registry.npm.taobao.org/loader-utils/download/loader-utils-1.4.0.tgz"
   "version" "1.4.0"
@@ -5677,6 +5677,11 @@
   "version" "2.3.2"
   dependencies:
     "lower-case" "^1.1.1"
+
+"node-ensure@^0.0.0":
+  "integrity" "sha1-7K52QVDemYYexcgQ/V0Jaxg5Mqc="
+  "resolved" "https://registry.npmjs.org/node-ensure/-/node-ensure-0.0.0.tgz"
+  "version" "0.0.0"
 
 "node-fetch@^2.6.1":
   "integrity" "sha512-V4aYg89jEoVRxRb2fJdAg8FHvI7cEyYdVAh94HH0UIK8oJxUfkjlDQN9RbMx+bEjP7+ggMiFRprSti032Oipxw=="
@@ -6199,6 +6204,14 @@
     "ripemd160" "^2.0.1"
     "safe-buffer" "^5.0.1"
     "sha.js" "^2.4.8"
+
+"pdfjs-dist@^2.2.228":
+  "integrity" "sha512-W5LhYPMS2UKX0ELIa4u+CFCMoox5qQNQElt0bAK2mwz1V8jZL0rvLao+0tBujce84PK6PvWG36Nwr7agCCWFGQ=="
+  "resolved" "https://registry.npmjs.org/pdfjs-dist/-/pdfjs-dist-2.2.228.tgz"
+  "version" "2.2.228"
+  dependencies:
+    "node-ensure" "^0.0.0"
+    "worker-loader" "^2.0.0"
 
 "performance-now@^2.1.0":
   "integrity" "sha1-Ywn04OX6kT7BxpMHrjZLSzd8nns="
@@ -7139,6 +7152,14 @@
   "integrity" "sha1-KBYjTiN4vdxOU1T6tcqold9xANk="
   "resolved" "https://registry.npm.taobao.org/sax/download/sax-1.2.4.tgz"
   "version" "1.2.4"
+
+"schema-utils@^0.4.0":
+  "integrity" "sha512-v/iwU6wvwGK8HbU9yi3/nhGzP0yGSuhQMzL6ySiec1FSrZZDkhm4noOSWzrNFo/jEc+SJY6jRTwuwbSXJPDUnQ=="
+  "resolved" "https://registry.npmjs.org/schema-utils/-/schema-utils-0.4.7.tgz"
+  "version" "0.4.7"
+  dependencies:
+    "ajv" "^6.1.0"
+    "ajv-keywords" "^3.1.0"
 
 "schema-utils@^1.0.0":
   "integrity" "sha1-C3mpMgTXtgDUsoUNH2bCo0lRx3A="
@@ -8445,7 +8466,7 @@
     "source-list-map" "^2.0.0"
     "source-map" "~0.6.1"
 
-"webpack@^4.0.0":
+"webpack@^3.0.0 || ^4.0.0-alpha.0 || ^4.0.0", "webpack@^4.0.0":
   "integrity" "sha1-v5tEBOogoHNgXgoBHRiNd8tq1UI="
   "resolved" "https://registry.nlark.com/webpack/download/webpack-4.46.0.tgz"
   "version" "4.46.0"
@@ -8529,6 +8550,14 @@
   "version" "1.7.0"
   dependencies:
     "errno" "~0.1.7"
+
+"worker-loader@^2.0.0":
+  "integrity" "sha512-tnvNp4K3KQOpfRnD20m8xltE3eWh89Ye+5oj7wXEEHKac1P4oZ6p9oTj8/8ExqoSBnk9nu5Pr4nKfQ1hn2APJw=="
+  "resolved" "https://registry.npmjs.org/worker-loader/-/worker-loader-2.0.0.tgz"
+  "version" "2.0.0"
+  dependencies:
+    "loader-utils" "^1.0.0"
+    "schema-utils" "^0.4.0"
 
 "wrap-ansi@^5.1.0":
   "integrity" "sha1-H9H2cjXVttD+54EFYAG/tpTAOwk="
