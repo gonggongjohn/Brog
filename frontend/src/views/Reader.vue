@@ -1,20 +1,30 @@
 <template>
-  <div class="row">
-    <div ref="main_reader">
-      <b-card no-body class="col-6">
+  <b-container>
+    <b-row>
+      <b-col ref="main_reader" cols="8">
         <!-- <canvas
           v-for="page in pageNum"
           :id="'canvas' + page"
           :key="page"
         ></canvas> -->
-        <img :src=zhouzhihua>
-      </b-card>
-    </div>
-    <div ref="ref_reader">
-      <img :src=huangdingjiang1>
-      <img :src=huangdingjiang2>
-    </div>
-  </div>
+        <b-container>
+          <b-row>
+            <img :src="zhouzhihua" />
+          </b-row>
+        </b-container>
+      </b-col>
+      <b-col ref="ref_reader" cols="5">
+        <b-container>
+          <b-row>
+            <img :src="huangdingjiang1" />
+          </b-row>
+          <b-row>
+            <img :src="huangdingjiang2" />
+          </b-row>
+        </b-container>
+      </b-col>
+    </b-row>
+  </b-container>
 </template>
 
 <script>
@@ -38,9 +48,12 @@ export default {
     this.pdf_url =
       this.getHostUrl() + ":5000/file/get_pdf?book_id=" + this.uuid;
     this.loadPdf(this.pdf_url);
-    this.zhouzhihua = this.getHostUrl() + ":5000/test/demo_img?pic_name=zhouzhihua";
-    this.huangdingjiang1 = this.getHostUrl() + ":5000/test/demo_img?pic_name=huangdingjiang1";
-    this.huangdingjiang2 = this.getHostUrl() + ":5000/test/demo_img?pic_name=huangdingjiang2";
+    this.zhouzhihua =
+      this.getHostUrl() + ":5000/test/demo_img?pic_name=zhouzhihua";
+    this.huangdingjiang1 =
+      this.getHostUrl() + ":5000/test/demo_img?pic_name=huangdingjiang1";
+    this.huangdingjiang2 =
+      this.getHostUrl() + ":5000/test/demo_img?pic_name=huangdingjiang2";
   },
   methods: {
     getHostUrl() {
