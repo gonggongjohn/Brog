@@ -1,43 +1,49 @@
 <template>
   <div class="row">
     <div ref="main_reader">
+      <img :src="zhouzhihua">
     </div>
     <div ref="ref_reader">
+      <img :src="huangdingjiang">
     </div>
   </div>
 </template>
 
 <script>
-
 export default {
-  name: 'Reader',
-  data(){
-    return{
+  name: "Reader",
+  data() {
+    return {
       uuid: "",
       pdf_url: "",
       pdf_doc: null,
-      pageNum: 0
-    }
+      pageNum: 0,
+      huangdingjiang: "",
+      zhouzhihua: "",
+    };
   },
   mounted() {
     this.uuid = this.$route.query.uuid;
-    this.pdf_url = this.getHostUrl() + ':5000/reader/' + this.uuid + '.pdf';
-    //this.loadPdf(this.pdf_url);
+    this.pdf_url = this.getHostUrl() + ":5000/file/" + this.uuid + ".pdf";
+    this.huangdingjiang = this.getHostUrl() + ":5000/test/demo_img/huangdingjiang/";
+    this.zhouzhihua = this.getHostUrl() + ":5000/test/demo_img/zhouzhihua/";
+    // this.loadPdf(this.pdf_url);
   },
   methods: {
-    getHostUrl(){
-      let full_path = window.document.location.href;
-      let protocol_index = full_path.indexOf("://");
-      let protocol_str = full_path.substring(0, protocol_index);
-      let full_path_stripped = full_path.substring(protocol_index + 3);
-      let router_path =  this.$route.path;
-      let host_index = full_path_stripped.indexOf(router_path);
-      let full_host = full_path_stripped.substring(0, host_index);
-      console.log(full_path);
-      let pred_index = full_host.lastIndexOf(":");
-      let pure_host = full_host.substring(0, pred_index);
-      return protocol_str + "://" + pure_host;
-    },
+    getHostUrl: () => location.origin.replace(":8080", ""),
+    // getHostUrl(){
+    //   let full_path = window.document.location.href;
+    //   let protocol_index = full_path.indexOf("://");
+    //   let protocol_str = full_path.substring(0, protocol_index);
+    //   let full_path_stripped = full_path.substring(protocol_index + 3);
+    //   let router_path =  this.$route.path;
+    //   let host_index = full_path_stripped.indexOf(router_path);
+    //   let full_host = full_path_stripped.substring(0, host_index);
+    //   console.log(full_path);
+    //   let pred_index = full_host.lastIndexOf(":");
+    //   let pure_host = full_host.substring(0, pred_index);
+    //   return protocol_str + "://" + pure_host;
+    // },
     /*
     loadPdf(pdf_url){
       let that = this;
@@ -69,6 +75,6 @@ export default {
       });
     }
     */
-  }
-}
+  },
+};
 </script>
