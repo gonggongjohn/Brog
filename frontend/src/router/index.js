@@ -1,14 +1,26 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+import Sign from '../views/Sign.vue'
+import Dashboard from '../views/Dashboard.vue'
+import Reader from '../views/Reader.vue'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'Home',
-    component: Home
+    name: 'Sign',
+    component: Sign
+  },
+  {
+    path: '/dashboard',
+    name: "DashBoard",
+    component: Dashboard
+  },
+  {
+    path: '/reader',
+    name: "Reader",
+    component: Reader
   },
   {
     path: '/about',
