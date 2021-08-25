@@ -41,8 +41,8 @@
     "@vue/cli-service": "^4.5.13",
     "@vue/eslint-config-prettier": "^4.0.1",
     "babel-plugin-component": "^1.1.0",
-    "node-sass": "^6.0.1",
-    "sass-loader": "^10.1.1",
+    "node-sass": "^4.0.0",
+    "sass-loader": "^7.1.0",
     "vue-template-compiler": "^2.6.11"
   },
   "postcss": {
