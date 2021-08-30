@@ -1,112 +1,119 @@
 <template>
   <div>
     <base-header class="pb-6 pb-8 pt-5 pt-md-8 bg-gradient-success">
-      <!-- Card stats -->
-      <b-row>
-        <b-col xl="3" md="6">
-          <stats-card title="Total traffic"
-                      type="gradient-red"
-                      sub-title="350,897"
-                      icon="ni ni-active-40"
-                      class="mb-4">
+     <div align="center">
 
-            <template slot="footer">
-              <span class="text-success mr-2">3.48%</span>
-              <span class="text-nowrap">Since last month</span>
-            </template>
-          </stats-card>
-        </b-col>
-        <b-col xl="3" md="6">
-          <stats-card title="Total traffic"
-                      type="gradient-orange"
-                      sub-title="2,356"
-                      icon="ni ni-chart-pie-35"
-                      class="mb-4">
+       <b-form-file v-model="upload_file" accept=".pdf" ref="file-input" class="mb-2"></b-form-file>
 
-            <template slot="footer">
-              <span class="text-success mr-2">12.18%</span>
-              <span class="text-nowrap">Since last month</span>
-            </template>
-          </stats-card>
-        </b-col>
-        <b-col xl="3" md="6">
-          <stats-card title="Sales"
-                      type="gradient-green"
-                      sub-title="924"
-                      icon="ni ni-money-coins"
-                      class="mb-4">
+       <b-button @click="onUploadFile" squared variant="primary">上传文件</b-button>
 
-            <template slot="footer">
-              <span class="text-danger mr-2">5.72%</span>
-              <span class="text-nowrap">Since last month</span>
-            </template>
-          </stats-card>
+    </div>
 
-        </b-col>
-        <b-col xl="3" md="6">
-          <stats-card title="Performance"
-                      type="gradient-info"
-                      sub-title="49,65%"
-                      icon="ni ni-chart-bar-32"
-                      class="mb-4">
+      <div class="container mt-2">
+      <h4>可用资料</h4>
+      <b-list-group>
 
-            <template slot="footer">
-              <span class="text-success mr-2">54.8%</span>
-              <span class="text-nowrap">Since last month</span>
-            </template>
-          </stats-card>
-        </b-col>
-      </b-row>
+        <b-list-group-item v-for="(book_item, index) in book_list" :key="book_item">
+
+          <div class="row">
+
+            <p class="col">资料名：{{book_item.name}}</p>
+            <p class="col">贡献者：{{book_item.contributor}}</p>
+            <b-button class="col-3" @click="onAddToShelf(index)" variant="outline-primary">进入阅读</b-button>
+          </div>
+        </b-list-group-item>
+      </b-list-group>
+    </div>
     </base-header>
-    <b-container fluid class="mt--7">
-      <b-row>
-        <b-col>
-          <light-table/>
-        </b-col>
-      </b-row>
-      <div class="mt-5"></div>
-      <dark-table></dark-table>
-    </b-container>
+
+
+
   </div>
+
 </template>
 <script>
   import { Dropdown, DropdownItem, DropdownMenu, Table, TableColumn } from 'element-ui';
-  import projects from './Tables/projects'
-  import users from './Tables/users'
+
   import LightTable from "./Tables/RegularTables/LightTable";
-  import DarkTable from "./Tables/RegularTables/DarkTable";
+
 
   export default {
-    components: {
-      LightTable,
-      DarkTable,
-      [Dropdown.name]: Dropdown,
-      [DropdownItem.name]: DropdownItem,
-      [DropdownMenu.name]: DropdownMenu,
-      [Table.name]: Table,
-      [TableColumn.name]: TableColumn
-    },
     data() {
       return {
-        projects,
-        users
+        upload_file: null,
+        book_list: [
+        {
+          uuid:"1" ,
+          name: "123",
+          contributor: "1234"
+        }
+      ]
+
       };
+    },
+    mounted(){
+    this.getBookList();
+  },
+    methods:{
+      getHostUrl(){
+      let full_path = window.document.location.href;
+      let protocol_index = full_path.indexOf("://");
+      let protocol_str = full_path.substring(0, protocol_index);
+      let full_path_stripped = full_path.substring(protocol_index + 3);
+      let router_path =  this.$route.path;
+      let host_index = full_path_stripped.indexOf(router_path);
+      let full_host = full_path_stripped.substring(0, host_index);
+      console.log(full_path);
+      let pred_index = full_host.lastIndexOf(":");
+      let pure_host = full_host.substring(0, pred_index);
+      return protocol_str + "://" + pure_host;
+    },
+      onUploadFile(){
+      var url = this.getHostUrl() + ':5000/file/upload/';
+      var form = new FormData();
+      form.append('file', this.upload_file);
+      let config = {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      };
+
+      this.axios.post(url, form, config).then(response => {
+        console.log(response);
+        window.alert("文件上传成功")
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.log(JSON.stringify(error))
+      });
+    },
+      getBookList(){
+      var url = this.getHostUrl() + ':5000/file/list_all/';
+      this.axios.get(url).then((response) => {
+        if(response.data && response.status == 200){
+          var book_list_tmp = response.data;
+          book_list_tmp.forEach((book) => {
+            this.book_list.push({
+              uuid: book.id,
+              name: book.filename,
+              contributor: book.contributor
+            });
+            console.log(book);
+          });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
     }
-  };
+    }
+
+  }
 </script>
 <style>
-.el-table.table-dark{
-  background-color: #172b4d;
-  color: #f8f9fe;
-}
 
-.el-table.table-dark th,
-.el-table.table-dark tr{
-  background-color: #172b4d;
-}
-
-.el-table.table-dark td,
-.el-table.table-dark th.is-leaf{
-  border-bottom: none;
-}
 </style>
+
+
+
+

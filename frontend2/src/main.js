@@ -24,7 +24,7 @@ import router from './routes/router';
 Vue.use(DashboardPlugin);
 
 
-// axios.defaults.withCredentials = true
+axios.defaults.withCredentials = true
 
 import axios from 'axios'
 
