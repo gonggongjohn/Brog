@@ -47,7 +47,7 @@ def upload():
             return json.dumps({'status': 500, 'reason': 'invalid file suffix', })
         y.filename = y.filename.replace(' ', '_')
         sql_file = File(
-            contributer=session['user_id'],
+            contributor=session['user_id'],
             filename=y.filename,
             id=''.join(choices(string.ascii_letters + string.digits, k=50))
         )
@@ -75,7 +75,7 @@ def list_all():
     return json.dumps(list(map(lambda x: {
         "id": x.id,
         "filename": x.filename,
-        "contributer": db.session.query(User).filter_by(id=x.contributer).first().name,
+        "contributor": db.session.query(User).filter_by(id=x.contributor).first().name,
     }, db.session.query(File).all()))), 200
 
 
