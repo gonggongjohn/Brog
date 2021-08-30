@@ -16,7 +16,7 @@
         <sidebar-item
             :link="{
               name: 'Documents',
-              path: '/tables',
+              path: `/documents/${username}`,
               icon: 'ni ni-books text-blue'
               }"
             >
