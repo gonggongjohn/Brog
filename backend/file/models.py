@@ -7,7 +7,7 @@ class File(db.Model):
     id = Column(type_=String(50),
                 unique=True,
                 primary_key=True)
-    contributor = Column(String(50),ForeignKey('user.id', onupdate='CASCADE', ondelete='SET NULL'),nullable=True)
+    contributer = Column(String(50),ForeignKey('user.id', onupdate='CASCADE', ondelete='SET NULL'),nullable=True)
     filename = Column(String(100))
 
 class Collection(db.Model):
