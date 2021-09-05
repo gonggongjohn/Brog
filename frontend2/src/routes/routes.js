@@ -24,8 +24,8 @@ const routes = [
         component: () => import(/* webpackChunkName: "demo" */ '../views/Pages/UserProfile.vue')
       },
       {
-        path: '/tables',
-        name: 'tables',
+        path: '/documents/:username',
+        name: 'documents',
         component: () => import(/* webpackChunkName: "demo" */ '../views/Documents.vue')
       }
 
