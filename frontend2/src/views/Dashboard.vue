@@ -3,6 +3,7 @@
 
     <base-header class="pb-6 pb-8 pt-5 pt-md-8 bg-gradient-success">
 <!--       Card stats -->
+
       <b-row>
 
         <b-col xl="4" md="6">
@@ -63,9 +64,9 @@
 
       </b-row>
 
-    <!-- <div>{{getBookNum()}}</div> -->
     
-   <li v-for='num in 10' :key="num">{{ num }}</li>
+    <div v-html="htmlMsg"></div>
+    <!-- <div id="info"></div> -->
 
     </base-header>
 
@@ -87,7 +88,7 @@
     },
     data() {
       return {
-
+        htmlMsg:this.getBook(),
       book_list: [
         {
           uuid:"1" ,
@@ -111,16 +112,42 @@
       let pure_host = full_host.substring(0, pred_index);
       return protocol_str + "://" + pure_host;
     },
-      getBookNum(){
+      getBook(){
         console.log(this.getHostUrl() )
 var url = this.getHostUrl() + ':5000/file/list_all/';
       this.axios.get(url).then((response) => {
   if(response.data && response.status == 200){
-          var book_list_tmp = response.data;
-          console.log("booknum:",book_list_tmp.length)
+          var book_list_tmp = response.data;          
+          var booknum=book_list_tmp.length;
+          var rownum=parseInt(booknum/3);
+          var colnum=booknum-3*rownum;
+          //生成html格式文本
+          var htmlStr='';
+          var i,j=0;
+          for(i=0;i<=rownum;i++){
+            htmlStr+='<div class="row">';
+            if(i!=rownum){
+              console.log(i,rownum)
+              for(j=0;j<3;j++){
+              htmlStr+='<div class="col-md-6 col-xl-4"><div><article class="card mb-2 text-center" style="max-width: 20rem;"><img src="/img/books/book_logo.png" alt="Image" class="card-img-top"><!----><div class="card-body"><h4 class="card-title">'+book_list_tmp[3*i+j].filename+'</h4><!----><a role="button" tabindex="0" href="#" target="_self" class="btn btn-primary">进入阅读</a><a role="button" tabindex="0" href="#" target="_self" class="btn btn-primary">添加到书架</a></div><!----><!----></article></div></div>';
+              }
+
+            }else{
+              for(j=0;j<colnum;j++){
+                console.log(book_list_tmp[3*i+j].filename)
+              htmlStr+='<div class="col-md-6 col-xl-4"><div><article class="card mb-2 text-center" style="max-width: 20rem;"><img src="/img/books/book_logo.png" alt="Image" class="card-img-top"><!----><div class="card-body"><h4 class="card-title">'+book_list_tmp[3*i+j].filename+'</h4><!----><a role="button" tabindex="0" href="#" target="_self" class="btn btn-primary">进入阅读</a><a role="button" tabindex="0" href="#" target="_self" class="btn btn-primary">添加到书架</a></div><!----><!----></article></div></div>';
+
+
+              }
+            }
+            htmlStr+="</div>";
+          }
           // window.innerHTML()
           // return book_list_tmp.length;
-          return book_list_tmp.length;
+          console.log(htmlStr)
+          this.htmlMsg=htmlStr;
+          // document.getElementById ("info").innerHTML =htmlStr;
+          return htmlStr;
 
         }
 
@@ -150,6 +177,8 @@ var url = this.getHostUrl() + ':5000/file/list_all/';
     
     },
     mounted() {
+    // htmlMsg=this.getBook();
+
       // this.getBookList();
     }
   };
