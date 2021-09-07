@@ -12,14 +12,24 @@
       <div class="container mt-2">
       <h4>可用资料</h4>
       <b-list-group>
+        <b-list-group-item>
+          <div class="row"  >
+        <p class="col" >资料名</p>
+        <p class="col">贡献者</p>
+        <p class="col">操作</p>
+        </div>
+        </b-list-group-item>
+
 
         <b-list-group-item v-for="(book_item, index) in book_list" :key="book_item">
 
           <div class="row">
 
-            <p class="col">资料名：{{book_item.name}}</p>
-            <p class="col">贡献者：{{book_item.contributor}}</p>
-            <b-button class="col-3" @click="onAddToShelf(index)" variant="outline-primary">进入阅读</b-button>
+            <p class="col">{{book_item.name}}</p>
+            <p class="col">{{book_item.contributor}}</p>
+            <p class ="col" >
+              <b-button class="col-3"  @click="onAddToShelf(index)" variant="outline-primary" >添加到书架</b-button>
+            </p>
           </div>
         </b-list-group-item>
       </b-list-group>
@@ -32,9 +42,7 @@
 
 </template>
 <script>
-  import { Dropdown, DropdownItem, DropdownMenu, Table, TableColumn } from 'element-ui';
 
-  import LightTable from "./Tables/RegularTables/LightTable";
 
 
   export default {
@@ -42,11 +50,11 @@
       return {
         upload_file: null,
         book_list: [
-        {
-          uuid:"1" ,
-          name: "123",
-          contributor: "1234"
-        }
+        // {
+        //   uuid:"1" ,
+        //   name: "123",
+        //   contributor: "1234"
+        // }
       ]
 
       };
@@ -105,7 +113,29 @@
       .catch((error) => {
         console.log(error);
       });
+    },
+      onAddToShelf(index){
+      let url = this.getHostUrl() + ':5000/file/add_collection/';
+      var payload = JSON.stringify({book_id: this.book_list[index].uuid});
+      this.axios.post(url, payload).then((response) => {
+        if(response.data != undefined){
+          if(response.data.status == '200'){
+            window.alert("添加成功!");
+            window.location.reload();
+
+          }
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
     }
+
+
+    //   onReadingBook(index){
+    //   this.$router.push({path: '/reader', query: {uuid: this.book_list[index].uuid}});
+    // }
     }
 
   }

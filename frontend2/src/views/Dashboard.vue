@@ -18,7 +18,7 @@
           align="center">
 
       <b-button href="#" variant="primary">进入阅读</b-button>
-            <b-button href="#" variant="primary">添加到书架</b-button>
+<!--            <b-button href="#" variant="primary">添加到书架</b-button>-->
       </b-card>
       </div>
 
@@ -36,7 +36,7 @@
           align="center">
 
       <b-button href="#" variant="primary">进入阅读</b-button>
-            <b-button href="#" variant="primary">添加到书架</b-button>
+<!--            <b-button href="#" variantariant="primary">添加到书架</b-button>-->
       </b-card>
       </div>
 
@@ -55,7 +55,7 @@
           align="center">
 
       <b-button href="#" variant="primary">进入阅读</b-button>
-            <b-button href="#" variant="primary">添加到书架</b-button>
+<!--            <b-button href="#" variantariant="primary">添加到书架</b-button>-->
       </b-card>
       </div>
 
