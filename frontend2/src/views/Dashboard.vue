@@ -63,6 +63,10 @@
 
       </b-row>
 
+    <!-- <div>{{getBookNum()}}</div> -->
+    
+   <li v-for='num in 10' :key="num">{{ num }}</li>
+
     </base-header>
 
 
@@ -84,12 +88,69 @@
     data() {
       return {
 
+      book_list: [
+        {
+          uuid:"1" ,
+          name: "123",
+          contributor: "1234"
+        }
+      ]
       };
     },
     methods: {
+       getHostUrl(){
+      let full_path = window.document.location.href;
+      let protocol_index = full_path.indexOf("://");
+      let protocol_str = full_path.substring(0, protocol_index);
+      let full_path_stripped = full_path.substring(protocol_index + 3);
+      let router_path =  this.$route.path;
+      let host_index = full_path_stripped.indexOf(router_path);
+      let full_host = full_path_stripped.substring(0, host_index);
+      console.log(full_path);
+      let pred_index = full_host.lastIndexOf(":");
+      let pure_host = full_host.substring(0, pred_index);
+      return protocol_str + "://" + pure_host;
+    },
+      getBookNum(){
+        console.log(this.getHostUrl() )
+var url = this.getHostUrl() + ':5000/file/list_all/';
+      this.axios.get(url).then((response) => {
+  if(response.data && response.status == 200){
+          var book_list_tmp = response.data;
+          console.log("booknum:",book_list_tmp.length)
+          // window.innerHTML()
+          // return book_list_tmp.length;
+          return book_list_tmp.length;
 
+        }
+
+      });
+      },
+       getBookList(){
+      var url = this.getHostUrl() + ':5000/file/list_all/';
+      this.axios.get(url).then((response) => {
+        if(response.data && response.status == 200){
+          var book_list_tmp = response.data;
+          console.log(book_list_tmp)
+          // window.innerHTML()
+          book_list_tmp.forEach((book) => {
+            this.book_list.push({
+              uuid: book.id,
+              name: book.filename,
+              contributor: book.contributor
+            });
+            console.log(book);
+          });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    }
+    
     },
     mounted() {
+      // this.getBookList();
     }
   };
 </script>
