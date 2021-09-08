@@ -1,4 +1,5 @@
 import DashboardLayout from '@/views/Layout/DashboardLayout.vue';
+import ViewerLayout from '@/views/Layout/ViewerLayout.vue';
 import AuthLayout from '@/views/Pages/AuthLayout.vue';
 
 import NotFound from '@/views/NotFoundPage.vue';
@@ -31,6 +32,20 @@ const routes = [
 
     ]
   },
+  {
+    path: '/viewer',
+    redirect: 'viewer',
+    component: ViewerLayout,
+    children: [
+    
+      {
+        path: '/viewer/:username',
+        name: 'viewer',
+        component: () => import(/* webpackChunkName: "demo" */ '../views/Viewer.vue')
+      }
+
+    ]
+  },
 
 
   {
@@ -49,6 +64,7 @@ const routes = [
         component: () => import(/* webpackChunkName: "demo" */ '../views/Pages/Register.vue')
       },
       { path: '*', component: NotFound }
+
     ]
   }
 ];
