@@ -10,17 +10,36 @@
     <iframe :src="src" v-if="counter%2" class="act-form"></iframe>
   </div>
  </div>
+<!-- https://www.npmjs.com/package/vue-markdown -->
+ <vue-markdown>i am a ~~tast~~ **test**. $\eta_1, \eta_2, \cdots, \eta_{n−r}$ </vue-markdown>
+ <!-- https://evolly.one/2019/07/01/118-vue-markdown-loader/ -->
+<!-- class markdown-body 必须加，否则标签样式会出现问题 -->
+  <div class="markdown-body">
+    <markdown />
+  </div>
+
+
+
     </base-header>
 
 
 
   </div>
 </template>
-<script>
 
+<script>
+// 引入 markdown 文件，引入后是一个组件，需要在 components 中注册
+import markdown from '@/assets/ApiDocument.md'
+// 代码高亮
+import 'highlight.js/styles/github.css'
+// 其他元素使用 github 的样式
+import 'github-markdown-css'
+import VueMarkdown from 'vue-markdown'
 
   export default {
     components: {
+      markdown,
+      VueMarkdown
       // LineChart,
       // BarChart,
       // BaseProgress,
