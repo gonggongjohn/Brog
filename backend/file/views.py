@@ -18,7 +18,7 @@ from random import choices
 from concurrent.futures import ThreadPoolExecutor
 executor = ThreadPoolExecutor()
 
-ALLOWED_SUFFIX = ['pdf', ]
+ALLOWED_SUFFIX = ['pdf', 'md', ]
 
 bp = Blueprint(
     name='file',
@@ -43,29 +43,37 @@ def upload():
     success, crash = 0, 0
     for x in request.files:
         y = request.files[x]
-        if y.filename.split('.')[-1] not in ALLOWED_SUFFIX:
+        suffix = y.filename.split('.')[-1]
+        if suffix not in ALLOWED_SUFFIX:
             return json.dumps({'status': 500, 'reason': 'invalid file suffix', })
         y.filename = y.filename.replace(' ', '_')
         sql_file = File(
             contributor=session['user_id'],
             filename=y.filename,
-            id=''.join(choices(string.ascii_letters + string.digits, k=50))
+            id=''.join(choices(string.ascii_letters + string.digits, k=50)),
+            suffix=suffix
         )
-        while True:
+        while crash < 10:
             try:
                 db.session.add(sql_file)
                 db.session.commit()
                 break
             except:
+                crash += 1
                 db.session.rollback()
                 sql_file.id = ''.join(
                     choices(string.ascii_letters + string.digits, k=50))
-        pdf_path = os.path.join(FILE_DIR, "pdf", '(%s)-%s' %
-                                (sql_file.id, sql_file.filename))
-        xml_path = os.path.join(FILE_DIR, "xml", '(%s)-%s' %
-                                (sql_file.id, sql_file.filename.removesuffix(".pdf") + ".xml"))
-        y.save(pdf_path, buffer_size=512)
-        executor.submit(pdf_to_xml(pdf_path, xml_path))
+        if suffix == 'pdf':
+            pdf_path = os.path.join(FILE_DIR, "pdf", '(%s)-%s' %
+                                    (sql_file.id, sql_file.filename))
+            xml_path = os.path.join(FILE_DIR, "xml", '(%s)-%s' %
+                                    (sql_file.id, sql_file.filename.removesuffix(".pdf") + ".xml"))
+            y.save(pdf_path, buffer_size=512)
+            executor.submit(pdf_to_xml(pdf_path, xml_path))
+        elif suffix == 'md':
+            md_path = os.path.join(FILE_DIR, "md", '(%s)-%s' %
+                                   (sql_file.id, sql_file.filename))
+            y.save(md_path, buffer_size=512)
     return json.dumps({'status': 200, 'success': success, 'crash': crash, }), 200
 
 
@@ -123,7 +131,8 @@ def get_pdf():
         id=book_id).first().filename
 
     return send_file(
-        path_or_file=os.path.join(FILE_DIR, "pdf", "(%s)-%s" % (book_id, book_filename)),
+        path_or_file=os.path.join(
+            FILE_DIR, "pdf", "(%s)-%s" % (book_id, book_filename)),
         as_attachment=True,
         download_name=book_filename,
         environ=request.environ
@@ -154,7 +163,8 @@ def get_xml():
         id=book_id).first().filename.removesuffix("pdf") + "xml"
 
     return send_file(
-        path_or_file=os.path.join(FILE_DIR, "pdf", "(%s)-%s" % (book_id, book_filename)),
+        path_or_file=os.path.join(
+            FILE_DIR, "pdf", "(%s)-%s" % (book_id, book_filename)),
         as_attachment=True,
         download_name=book_filename,
         environ=request.environ
@@ -167,3 +177,26 @@ def get_xml():
     # book_path = os.path.join(FILE_DIR, "xml", "(%s)-%s" %
     #                          (book_id, book_filename))
     # return Response(read(book_path), content_type="application/octet-stream", headers={"Content-Disposition": "attachment", })
+
+
+@bp.route('/get_md/', methods=["GET", "POST", "OPTIONS"])
+@user.public.login_required
+def get_md():
+    try:
+        data = json.loads(request.get_data(as_text=True))
+        book_id = data["book_id"]
+    except:
+        book_id = request.values.get("book_id")
+
+    book_obj = db.session.query(File).filter_by(id=book_id).first()
+    book_filename = book_obj.filename.removesuffix(book_obj.suffix) + "md"
+    book_path = os.path.join(FILE_DIR, "md", "(%s)-%s" %
+                             (book_id, book_filename))
+
+    def read_str(book_path):
+        ret = ""
+        with open(book_path, "r") as f:
+            ret += f.read()
+        return ret
+
+    return read_str(book_path)

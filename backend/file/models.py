@@ -9,6 +9,7 @@ class File(db.Model):
                 primary_key=True)
     contributor = Column(String(50),ForeignKey('user.id', onupdate='CASCADE', ondelete='SET NULL'),nullable=True)
     filename = Column(String(100))
+    suffix = Column(String(20))
 
 class Collection(db.Model):
     __tablename__ = 'collection'
