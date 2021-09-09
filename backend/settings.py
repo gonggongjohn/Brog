@@ -7,7 +7,7 @@ SQLALCHEMY_ECHO = True
 SECRET_KEY = b'k\x87\xbaF\x93\x85N\x04m\xfc\xbe\xb6\x1a[\x16\xd1' \
     if DEBUG else os.urandom(16)
 # 注意生产环境下未必是这个账号密码
-SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:root@localhost:3306/brog_db'
+SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:@localhost:3306/brog_db'
 SQLALCHEMY_POOL_SIZE = 5
 SQLALCHEMY_POOL_TIMEOUT = 10
 SQLALCHEMY_POOL_RECYCLE = 2 * 60 * 60
