@@ -1,1 +1,1 @@
-from private import getUserObj
+from .private import getUserObj

@@ -51,7 +51,7 @@ def upload():
             filename=y.filename,
             id=''.join(choices(string.ascii_letters + string.digits, k=50))
         )
-        while True:
+        for cnt in range(10):
             try:
                 db.session.add(sql_file)
                 db.session.commit()
@@ -123,7 +123,8 @@ def get_pdf():
         id=book_id).first().filename
 
     return send_file(
-        path_or_file=os.path.join(FILE_DIR, "pdf", "(%s)-%s" % (book_id, book_filename)),
+        path_or_file=os.path.join(
+            FILE_DIR, "pdf", "(%s)-%s" % (book_id, book_filename)),
         as_attachment=True,
         download_name=book_filename,
         environ=request.environ
@@ -150,11 +151,13 @@ def get_xml():
         book_id = data["book_id"]
     except:
         book_id = request.values.get("book_id")
-    book_filename = db.session.query(File).filter_by(
-        id=book_id).first().filename.removesuffix("pdf") + "xml"
+    book_obj = db.session.query(File).filter_by(id=book_id).first()
+
+    book_filename = book_obj.filename.removesuffix(book_obj.suffix)
 
     return send_file(
-        path_or_file=os.path.join(FILE_DIR, "pdf", "(%s)-%s" % (book_id, book_filename)),
+        path_or_file=os.path.join(
+            FILE_DIR, "pdf", "(%s)-%s" % (book_id, book_filename)),
         as_attachment=True,
         download_name=book_filename,
         environ=request.environ
@@ -167,3 +170,55 @@ def get_xml():
     # book_path = os.path.join(FILE_DIR, "xml", "(%s)-%s" %
     #                          (book_id, book_filename))
     # return Response(read(book_path), content_type="application/octet-stream", headers={"Content-Disposition": "attachment", })
+
+
+@bp.route('/get_json/', methods=["GET", "POST", "OPTIONS"])
+@user.public.login_required
+def get_json():
+    try:
+        data = json.loads(request.get_data(as_text=True))
+        book_id = data["book_id"]
+    except:
+        book_id = request.values.get("book_id")
+    book_filename = db.session.query(File).filter_by(
+        id=book_id).first().filename.removesuffix("pdf") + "json"
+
+    def render(path: str) -> str:
+        ret = ""
+        with open(path, "r") as f:
+            ret += f.read()
+        return ret
+    return render(os.path.join(FILE_DIR, "json",
+                               "(%s)-%s" % (book_id, book_filename)))
+    #    "test.json"))
+
+
+@bp.route("/get_md/", methods=["GET", "POST", "OPTIONS"])
+@user.public.login_required
+def get_md():
+    try:
+        data = json.loads(request.get_data(as_text=True))
+        book_id = data["book_id"]
+    except:
+        book_id = request.values.get("book_id")
+    book_obj = db.session.query(File).filter_by(id=book_id).first()
+    book_filename = book_obj.filename.removesuffix(book_obj.suffix) + "md"
+
+    def render_to_str(path: str) -> str:
+        ret = ""
+        with open(path, "r") as f:
+            ret += f.read()
+        return ret
+    
+    try:
+        ret = render_to_str(os.path.json(
+            FILE_DIR, "md", "(%s)-%s" % (book_id, book_filename)))
+        return json.dumps({
+            "status": 200,
+            "data": ret,
+        }), 200
+    except:
+        return json.dumps({
+            "status": 404,
+            "data": "Sorry on such file",
+        }), 200
