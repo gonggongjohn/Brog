@@ -18,7 +18,7 @@ from random import choices
 from concurrent.futures import ThreadPoolExecutor
 executor = ThreadPoolExecutor()
 
-ALLOWED_SUFFIX = ['pdf', ]
+ALLOWED_SUFFIX = ['pdf', 'md', ]
 
 bp = Blueprint(
     name='file',
