@@ -45,7 +45,7 @@ class UserObj:
         self.user = User().to(self.device)
         self.loss_func = nn.MSELoss().to(self.device)
         self.optimzer = torch.optim.SGD(
-            self.user.parameters(), lr=1e-4, momentum=1e-2, nesterov=True)
+            self.user.parameters(), lr=1e-3, momentum=1e-2, nesterov=True)
         try:
             self.user.load_state_dict(torch.load(self.path + ".model"))
             self.user.load_state_dict(torch.load(self.path + ".optim"))
@@ -57,7 +57,7 @@ class UserObj:
         inputv = inputv.to(self.device)
         self.inQueue.put(inputv)
         with torch.no_grad():
-            outputv = self.user(inputv)
+            outputv = self.user.forward(inputv)
             return outputv
 
     def backward(self, labelv):

@@ -43,29 +43,37 @@ def upload():
     success, crash = 0, 0
     for x in request.files:
         y = request.files[x]
-        if y.filename.split('.')[-1] not in ALLOWED_SUFFIX:
+        suffix = y.filename.split('.')[-1]
+        if suffix not in ALLOWED_SUFFIX:
             return json.dumps({'status': 500, 'reason': 'invalid file suffix', })
         y.filename = y.filename.replace(' ', '_')
         sql_file = File(
             contributor=session['user_id'],
             filename=y.filename,
-            id=''.join(choices(string.ascii_letters + string.digits, k=50))
+            id=''.join(choices(string.ascii_letters + string.digits, k=50)),
+            suffix=suffix
         )
-        for cnt in range(10):
+        while crash < 10:
             try:
                 db.session.add(sql_file)
                 db.session.commit()
                 break
             except:
+                crash += 1
                 db.session.rollback()
                 sql_file.id = ''.join(
                     choices(string.ascii_letters + string.digits, k=50))
-        pdf_path = os.path.join(FILE_DIR, "pdf", '(%s)-%s' %
-                                (sql_file.id, sql_file.filename))
-        xml_path = os.path.join(FILE_DIR, "xml", '(%s)-%s' %
-                                (sql_file.id, sql_file.filename.removesuffix(".pdf") + ".xml"))
-        y.save(pdf_path, buffer_size=512)
-        executor.submit(pdf_to_xml(pdf_path, xml_path))
+        if suffix == 'pdf':
+            pdf_path = os.path.join(FILE_DIR, "pdf", '(%s)-%s' %
+                                    (sql_file.id, sql_file.filename))
+            xml_path = os.path.join(FILE_DIR, "xml", '(%s)-%s' %
+                                    (sql_file.id, sql_file.filename.removesuffix(".pdf") + ".xml"))
+            y.save(pdf_path, buffer_size=512)
+            executor.submit(pdf_to_xml(pdf_path, xml_path))
+        elif suffix == 'md':
+            md_path = os.path.join(FILE_DIR, "md", '(%s)-%s' %
+                                   (sql_file.id, sql_file.filename))
+            y.save(md_path, buffer_size=512)
     return json.dumps({'status': 200, 'success': success, 'crash': crash, }), 200
 
 
@@ -151,9 +159,8 @@ def get_xml():
         book_id = data["book_id"]
     except:
         book_id = request.values.get("book_id")
-    book_obj = db.session.query(File).filter_by(id=book_id).first()
-
-    book_filename = book_obj.filename.removesuffix(book_obj.suffix)
+    book_filename = db.session.query(File).filter_by(
+        id=book_id).first().filename.removesuffix("pdf") + "xml"
 
     return send_file(
         path_or_file=os.path.join(
@@ -172,28 +179,7 @@ def get_xml():
     # return Response(read(book_path), content_type="application/octet-stream", headers={"Content-Disposition": "attachment", })
 
 
-@bp.route('/get_json/', methods=["GET", "POST", "OPTIONS"])
-@user.public.login_required
-def get_json():
-    try:
-        data = json.loads(request.get_data(as_text=True))
-        book_id = data["book_id"]
-    except:
-        book_id = request.values.get("book_id")
-    book_filename = db.session.query(File).filter_by(
-        id=book_id).first().filename.removesuffix("pdf") + "json"
-
-    def render(path: str) -> str:
-        ret = ""
-        with open(path, "r") as f:
-            ret += f.read()
-        return ret
-    return render(os.path.join(FILE_DIR, "json",
-                               "(%s)-%s" % (book_id, book_filename)))
-    #    "test.json"))
-
-
-@bp.route("/get_md/", methods=["GET", "POST", "OPTIONS"])
+@bp.route('/get_md/', methods=["GET", "POST", "OPTIONS"])
 @user.public.login_required
 def get_md():
     try:
@@ -201,24 +187,16 @@ def get_md():
         book_id = data["book_id"]
     except:
         book_id = request.values.get("book_id")
+
     book_obj = db.session.query(File).filter_by(id=book_id).first()
     book_filename = book_obj.filename.removesuffix(book_obj.suffix) + "md"
+    book_path = os.path.join(FILE_DIR, "md", "(%s)-%s" %
+                             (book_id, book_filename))
 
-    def render_to_str(path: str) -> str:
+    def read_str(book_path):
         ret = ""
-        with open(path, "r") as f:
+        with open(book_path, "r") as f:
             ret += f.read()
         return ret
-    
-    try:
-        ret = render_to_str(os.path.json(
-            FILE_DIR, "md", "(%s)-%s" % (book_id, book_filename)))
-        return json.dumps({
-            "status": 200,
-            "data": ret,
-        }), 200
-    except:
-        return json.dumps({
-            "status": 404,
-            "data": "Sorry on such file",
-        }), 200
+
+    return read_str(book_path)
