@@ -1,78 +1,57 @@
 <template>
   <div>
-
-    <base-header class="pb-6 pb-8 pt-5 pt-md-8 bg-gradient-success">
-<!--       Card stats -->
-
-      <div>
- <button @click = "counter++" style = "font-size:25px;">控制右侧边栏</button>
-<div >
-    <iframe :src="src" v-if="counter%2" class="act-form"></iframe>
-  </div>
- </div>
-<!-- https://www.npmjs.com/package/vue-markdown -->
- <vue-markdown>i am a ~~tast~~ **test**. $\eta_1, \eta_2, \cdots, \eta_{n−r}$ </vue-markdown>
- <!-- https://evolly.one/2019/07/01/118-vue-markdown-loader/ -->
-<!-- class markdown-body 必须加，否则标签样式会出现问题 -->
-  <div class="markdown-body">
-    <markdown />
-  </div>
-
-
-
-    </base-header>
-
-
-
+    <markdown-it-vue ref="myMI" class="md-body" :content="content" :options="options" />
   </div>
 </template>
 
 <script>
-// 引入 markdown 文件，引入后是一个组件，需要在 components 中注册
-import markdown from '@/assets/ApiDocument.md'
-// 代码高亮
-import 'highlight.js/styles/github.css'
-// 其他元素使用 github 的样式
-import 'github-markdown-css'
-import VueMarkdown from 'vue-markdown'
+import MarkdownItVue from 'markdown-it-vue'
+import 'markdown-it-vue/dist/markdown-it-vue.css'
 
   export default {
     components: {
-      markdown,
-      VueMarkdown
-      // LineChart,
-      // BarChart,
-      // BaseProgress,
-      // StatsCard,
-      // PageVisitsTable,
-      // SocialTrafficTable
+      MarkdownItVue
     },
     data() {
       return {
-     src:'/login',
-     counter:0
+        src:'/login',
+        counter:0,
+        content: "# 第五章 矩阵计算问题 \n \
+在众多科学与工程学科，如物理、化学工程、统计学、经济学、生物学、信号处理、自动控 制、系统理论、医学和军事工程等中，许多问题都可用数学建模成矩阵方程 $Ax = b$. 根据数据向量 $b \\in \\mathbb{R}^{m \\times 1}$ 和数据矩阵 $A \\in \\mathbb{R}^{m \\times n}$ 的不同，矩阵方程主要有以下三种类型: \
+[abddd](1) \
+ 加粗",
+        options: {
+          linkAttributes: {
+            attrs: {
+              target: '_blank',
+              rel: 'noopener',
+              ref: 'link',
+              onclick: "console.log(this.getAttribute('href'));"
+            }
+          }
+        }
       };
     },
     methods: {
-       getHostUrl(){
-      let full_path = window.document.location.href;
-      let protocol_index = full_path.indexOf("://");
-      let protocol_str = full_path.substring(0, protocol_index);
-      let full_path_stripped = full_path.substring(protocol_index + 3);
-      let router_path =  this.$route.path;
-      let host_index = full_path_stripped.indexOf(router_path);
-      let full_host = full_path_stripped.substring(0, host_index);
-      console.log(full_path);
-      let pred_index = full_host.lastIndexOf(":");
-      let pure_host = full_host.substring(0, pred_index);
-      return protocol_str + "://" + pure_host;
-    }
-    
+      getHostUrl(){
+        let full_path = window.document.location.href;
+        let protocol_index = full_path.indexOf("://");
+        let protocol_str = full_path.substring(0, protocol_index);
+        let full_path_stripped = full_path.substring(protocol_index + 3);
+        let router_path =  this.$route.path;
+        let host_index = full_path_stripped.indexOf(router_path);
+        let full_host = full_path_stripped.substring(0, host_index);
+        console.log(full_path);
+        let pred_index = full_host.lastIndexOf(":");
+        let pure_host = full_host.substring(0, pred_index);
+        return protocol_str + "://" + pure_host;
+      },
+      onClickLink123(){
+        console.log("1");
+      }
     },
     mounted() {
-    // htmlMsg=this.getBook();
-
-      // this.getBookList();
+      this.$refs.myMI.use(require('markdown-it-mathjax'));
     }
   };
 </script>
