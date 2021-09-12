@@ -1,5 +1,5 @@
 import os
-import asyncio
+from sys import executable
 
 FILE_DIR = os.path.join(os.path.dirname(__file__), 'files')
 print('store all uploaded files at: %s' % FILE_DIR)
@@ -11,3 +11,7 @@ def read_xml(filename):
 SCRIPT_DIR = os.path.join(os.path.dirname(__file__), 'pdf2txt.py')
 def pdf_to_xml(pdf_path, xml_path):
     return lambda: os.system('python %s -o %s %s'%(SCRIPT_DIR, xml_path, pdf_path))
+
+def markdown_bold_to_link(md_name, put_to_database: executable):
+    with open(os.path.join(FILE_DIR,"md",md_name), 'r') as f:
+        if f: f.read()

@@ -188,15 +188,49 @@ def get_md():
     except:
         book_id = request.values.get("book_id")
 
-    book_obj = db.session.query(File).filter_by(id=book_id).first()
-    book_filename = book_obj.filename.removesuffix(book_obj.suffix) + "md"
-    book_path = os.path.join(FILE_DIR, "md", "(%s)-%s" %
-                             (book_id, book_filename))
+    try:
+        book_obj = db.session.query(File).filter_by(id=book_id).first()
+        book_filename = book_obj.filename.removesuffix(book_obj.suffix) + "md"
+        book_path = os.path.join(FILE_DIR, "md", "(%s)-%s" %
+                                 (book_id, book_filename))
+    except:
+        pass
+    book_path = os.path.join(FILE_DIR, "md", "test.md")
 
     def read_str(book_path):
         ret = ""
         with open(book_path, "r") as f:
-            ret += f.read()
+            ret = "".join(f.readlines(5))
+        return ret
+    return read_str(book_path), 200
+
+
+@bp.route('/get_md_lines/', methods=["GET, POST, OPTIONS"])
+@user.public.login_required
+def get_md_lines():
+    try:
+        data = json.loads(request.get_data(as_text=True))
+        book_list = data["book_list"]
+    except:
+        book_list = request.values.get("book_list")
+
+    def read_str(book_path):
+        ret = ""
+        with open(book_path, "r") as f:
+            ret = "".join(f.readlines(5))
         return ret
 
-    return read_str(book_path)
+    ret = {}
+    for book_id in book_list:
+        try: 
+            book_obj = db.session.query(File).filter_by(id=book_id).first()
+            book_filename = book_obj.filename.removesuffix(book_obj.suffix) + "md"
+            book_path = os.path.join(FILE_DIR, "md", "(%s)-%s" %
+                                    (book_id, book_filename))
+            ret["book_filename"] = read_str(book_path)
+        except:
+            pass
+    return json.dumps({
+        "data": ret,
+        "status": 200
+    }), 200

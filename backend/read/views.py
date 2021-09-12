@@ -1,6 +1,6 @@
 from flask.blueprints import Blueprint
 from flask\
-    import request,session
+    import request, session
 import json
 from user.models import *
 import os
@@ -14,17 +14,14 @@ bp = Blueprint(
     url_prefix='/read'
 )
 
-@bp.route('/tags/', methods=["GET", "POST"])
-@user.public.login_required
-def tags():
-    # 未完成
-    tags_ = []
-    return json.dumps(tags_)
 
-@bp.route('/pdf/', methods=["GET", "POST"])
-@user.public.login_required
-def pdf():
-    def stream_file_reader():
-        with open(os.path.join('./files', request.values.get('filename', default='0.pdf'))) as f:
-            yield f
-    return 
+@bp.route('/search/', methods=["GET", "POST"])
+def search():
+    try:
+        data = json.dumps(request.get_data(as_text=True))
+    except:
+        pass
+    return json.dumps({
+        "data": ["file1", "file2", "file3"],
+        "status": 200
+    }), 200

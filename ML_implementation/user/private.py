@@ -33,22 +33,23 @@ class User(nn.Module):
 
 
 active_user = dict()
-path = os.path.join(os.path.dirname(__file__), "state")
+MODEL_DIR = os.path.join(os.path.dirname(__file__), "state")
 
 
 class UserObj:
     def __init__(self, user_id):
         self.id = user_id
-        self.path = os.path.join(path, self.id)
+        self.path = MODEL_DIR
         self.device = torch.device(
             "cuda:0" if torch.cuda.is_available() else "cpu")
         self.user = User().to(self.device)
         self.loss_func = nn.MSELoss().to(self.device)
-        self.optimzer = torch.optim.SGD(
-            self.user.parameters(), lr=1e-3, momentum=1e-2, nesterov=True)
+        self.optimizer = torch.optim.SGD(self.user.parameters(), lr=1e-6, momentum=999e-3, weight_decay=1e-3, nesterov=True)
         try:
-            self.user.load_state_dict(torch.load(self.path + ".model"))
-            self.user.load_state_dict(torch.load(self.path + ".optim"))
+            total_state_dict = torch.load(
+                os.path.join(self.path, self.id + ".model"))
+            self.user.load_state_dict(total_state_dict['model'])
+            self.optimizer.load_state_dict(total_state_dict['optimizer'])
         except:
             pass
         self.inQueue = Queue()
@@ -58,19 +59,26 @@ class UserObj:
         self.inQueue.put(inputv)
         with torch.no_grad():
             outputv = self.user.forward(inputv)
+            self.user.zero_grad()
             return outputv
 
     def backward(self, labelv):
         labelv = labelv.to(self.device)
         inputv = self.user(self.inQueue.get())
-        self.optimzer.zero_grad()
+        self.optimizer.zero_grad()
         outputv = self.user(inputv)
         loss = self.loss_func(outputv, labelv)
         loss.backward()
-        self.optimzer.step()
+        loss = loss.item()
+        self.optimizer.step()
         if self.inQueue.empty():
-            torch.save(self.user.state_dict(), self.path + ".model")
-            torch.save(self.optimzer.state_dict(), self.path + ".optim")
+            torch.save(
+                {
+                    "model": self.user.state_dict(),
+                    "optimizer": self.optimizer.state_dict()
+                },
+                os.path.join(self.path, self.id + ".model")
+            )
         return loss
 
 
@@ -94,7 +102,7 @@ if __name__ == '__main__':
         # 模型、损失函数、优化器
         test_user = User().to(device)
         loss_func = nn.MSELoss().to(device)
-        optimzer = torch.optim.SGD(
+        optimizer = torch.optim.SGD(
             test_user.parameters(), lr=1e-4, momentum=0.01)
 
         # 随机生成拟合任务
@@ -122,7 +130,7 @@ if __name__ == '__main__':
             labels = inputv ** rand_power + inputv * rand_wei + rand_bias
             labels = labels.to(device)
 
-            optimzer.zero_grad()
+            optimizer.zero_grad()
 
             # 初始化优化器, 预测输出, 计算损失
             outputv = test_user(inputv)
@@ -137,7 +145,7 @@ if __name__ == '__main__':
 
             # 误差反向传播
             loss.backward()
-            optimzer.step()
+            optimizer.step()
 
         print("\n", " "*3, "最终误差 %.6f" % (running_loss))
     else:
@@ -176,7 +184,7 @@ if __name__ == '__main__':
 
             for y in range(4):
                 running_loss += 1e-2 * \
-                    (test_user_obj.backward(labels[y]).item()-running_loss)
+                    (test_user_obj.backward(labels[y])-running_loss)
                 if (x + y) % 2 ** 6 == 9:
                     print('\r', ' ' * 3, '运行误差 %.6f[训练进度 %.3f%%]' %
                           (running_loss, (x + y) / test_size * 100),
