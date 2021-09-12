@@ -7,8 +7,8 @@
 <script>
 import MarkdownItVue from 'markdown-it-vue'
 import 'markdown-it-vue/dist/markdown-it-vue.css'
-
   export default {
+
     components: {
       MarkdownItVue
     },
@@ -29,7 +29,9 @@ import 'markdown-it-vue/dist/markdown-it-vue.css'
               onclick: "console.log(this.getAttribute('href'));"
             }
           }
-        }
+        },
+        md_url:"",
+
       };
     },
     methods: {
@@ -48,9 +50,30 @@ import 'markdown-it-vue/dist/markdown-it-vue.css'
       },
       onClickLink123(){
         console.log("1");
-      }
+      },
+      loadMd(md_url) {
+        // this.content = md_url;
+        console.log(md_url);
+        this.axios.get(md_url).then((response) => {
+        if(response.data && response.status == 200){
+          var res = response.data;
+          console.log(res);
+        }
+
+        this.content=res;
+
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    },
     },
     mounted() {
+      this.uuid = this.$route.path.split('/')[2];
+      console.log(this.uuid);
+      this.md_url=this.getHostUrl() + ":5000/file/get_md?book_id=" + this.uuid;
+      this.loadMd(this.md_url);
       this.$refs.myMI.use(require('markdown-it-mathjax'));
     }
   };
