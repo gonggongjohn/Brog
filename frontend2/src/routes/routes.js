@@ -39,7 +39,7 @@ const routes = [
     children: [
     
       {
-        path: '/viewer/:username',
+        path: '/viewer/:uuid',
         name: 'viewer',
         component: () => import(/* webpackChunkName: "demo" */ '../views/Viewer.vue')
       }
