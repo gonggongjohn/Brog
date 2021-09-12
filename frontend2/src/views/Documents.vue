@@ -3,7 +3,7 @@
     <base-header class="pb-6 pb-8 pt-5 pt-md-8 bg-gradient-success">
      <div align="center">
 
-       <b-form-file v-model="upload_file" accept=".pdf" ref="file-input" class="mb-2"></b-form-file>
+       <b-form-file v-model="upload_file" accept=".md" ref="file-input" class="mb-2"></b-form-file>
 
        <b-button @click="onUploadFile" squared variant="primary">上传文件</b-button>
 
