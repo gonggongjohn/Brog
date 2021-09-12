@@ -22,6 +22,8 @@
     "flatpickr": "^4.5.7",
     "fuse.js": "^3.2.0",
     "google-maps": "^3.2.1",
+    "markdown-it-mathjax": "^2.0.0",
+    "markdown-it-vue": "^1.1.6",
     "nouislider": "^12.1.0",
     "pdfjs-dist": "^2.2.228",
     "perfect-scrollbar": "^1.3.0",
