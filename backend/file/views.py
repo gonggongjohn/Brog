@@ -89,6 +89,7 @@ def upload():
                         sql_word.id = ''.join(
                             choices(string.ascii_letters + string.digits, k=80)
                         )
+                return sql_word.id
 
             executor.submit(markdown_bold_to_link(md_path, put_to_database))
     return json.dumps({'status': 200, 'success': success, 'crash': crash, }), 200

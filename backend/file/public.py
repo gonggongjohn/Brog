@@ -25,7 +25,8 @@ def markdown_bold_to_link(md_name, put_to_database: function):
         if f:
             mdStr = f.read()
     msk = False
-    for x in mdStr.split("**"):
+    splited = mdStr.split("**")
+    for x in splited:
         if msk:
-            put_to_database(x.strip(" "))
+            x = "[%s](%s)" % (x, put_to_database(x.strip(" ")))
         msk = not msk
