@@ -212,8 +212,8 @@ def get_md():
         book_path = os.path.join(FILE_DIR, "md", "(%s)-%s" %
                                  (book_id, book_filename))
     except:
+        book_path = os.path.join(FILE_DIR, "md", "test.md")
         pass
-    book_path = os.path.join(FILE_DIR, "md", "test.md")
 
     def read_str(book_path):
         ret = ""
