@@ -5,6 +5,8 @@ import json
 from user.models import *
 import os
 import user.public
+from ext import db
+from read.models import *
 
 bp = Blueprint(
     name='read',
@@ -16,12 +18,18 @@ bp = Blueprint(
 
 
 @bp.route('/search/', methods=["GET", "POST"])
+@user.public.login_required
 def search():
     try:
         data = json.dumps(request.get_data(as_text=True))
+        word_id, file_id = data["word_id"], data["file_id"]
+        wordObj = db.session.query(SearchWord).filter_by(id=word_id).first()
+        otherWordObjs = db.session.query(SearchWord).filter_by(
+            spelling=wordObj.spelling).all()
+        responseData = [x.fromFile for x in otherWordObjs]
     except:
         pass
     return json.dumps({
-        "data": ["file1", "file2", "file3"],
+        "data": responseData,
         "status": 200
     }), 200

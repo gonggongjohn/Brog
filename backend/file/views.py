@@ -74,6 +74,23 @@ def upload():
             md_path = os.path.join(FILE_DIR, "md", '(%s)-%s' %
                                    (sql_file.id, sql_file.filename))
             y.save(md_path, buffer_size=512)
+
+            def put_to_database(word):
+                from read.models import SearchWord
+                sql_word = SearchWord(id=''.join(choices(string.ascii_letters + string.digits, k=80)),
+                                      spelling=word, fromFile=sql_file.id)
+                for x in range(5):
+                    try:
+                        db.session.add(sql_word)
+                        db.session.commit()
+                        break
+                    except:
+                        db.session.rollback()
+                        sql_word.id = ''.join(
+                            choices(string.ascii_letters + string.digits, k=80)
+                        )
+
+            executor.submit(markdown_bold_to_link(md_path, put_to_database))
     return json.dumps({'status': 200, 'success': success, 'crash': crash, }), 200
 
 
@@ -222,11 +239,12 @@ def get_md_lines():
 
     ret = {}
     for book_id in book_list:
-        try: 
+        try:
             book_obj = db.session.query(File).filter_by(id=book_id).first()
-            book_filename = book_obj.filename.removesuffix(book_obj.suffix) + "md"
+            book_filename = book_obj.filename.removesuffix(
+                book_obj.suffix) + "md"
             book_path = os.path.join(FILE_DIR, "md", "(%s)-%s" %
-                                    (book_id, book_filename))
+                                     (book_id, book_filename))
             ret["book_filename"] = read_str(book_path)
         except:
             pass
