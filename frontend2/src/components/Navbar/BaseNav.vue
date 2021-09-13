@@ -1,5 +1,6 @@
 <template>
   <b-navbar toggleable :class="classes">
+    <!--
     <div :class="containerClasses">
       <slot name="brand"></slot>
 
@@ -33,6 +34,7 @@
         <slot :close-menu="closeMenu"></slot>
       </b-collapse>
     </div>
+    -->
   </b-navbar>
 </template>
 <script>
