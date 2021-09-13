@@ -253,7 +253,7 @@ def get_md_lines():
         try:
             book_obj = db.session.query(File).filter_by(id=book_id).first()
             book_filename = book_obj.filename.removesuffix(
-                book_obj.suffix) + "md"
+                "." + book_obj.suffix)
             book_path = os.path.join(FILE_DIR, "md", "(%s)-%s" %
                                      (book_id, book_filename))
             ret[book_filename] = read_str(book_path)
