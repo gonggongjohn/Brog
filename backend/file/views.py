@@ -218,7 +218,8 @@ def get_md():
     def read_str(book_path):
         ret = ""
         with open(book_path, "r") as f:
-            ret = "".join(f.readlines(5))
+            ret = f.read()
+            # ret = "".join(f.readlines(5))
         return ret
     return read_str(book_path), 200
 
