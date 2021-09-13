@@ -19,14 +19,16 @@ def pdf_to_xml(pdf_path, xml_path):
     return lambda: os.system('python %s -o %s %s' % (SCRIPT_DIR, xml_path, pdf_path))
 
 
-def markdown_bold_to_link(md_name, put_to_database):
+def markdown_bold_to_link(md_path, put_to_database):
     mdStr = ""
-    with open(os.path.join(FILE_DIR, "md", md_name), 'r') as f:
-        if f:
-            mdStr = f.read()
+    with open(md_path, 'r') as f:
+        mdStr = f.read()
     msk = False
     splited = mdStr.split("**")
-    for x in splited:
+    for i in range(len(splited)):
         if msk:
-            x = "[%s](%s)" % (x, put_to_database(x.strip(" ")))
+            splited[i] = "[%s](%s)" % (splited[i].strip(
+                " "), put_to_database(splited[i].strip(" ")))
         msk = not msk
+    with open(md_path, 'w') as f:
+        f.write("".join(splited))
