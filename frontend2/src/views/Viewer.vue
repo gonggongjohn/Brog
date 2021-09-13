@@ -1,18 +1,20 @@
 <template>
   <div>
-    <b-container>
+    <div class="container-fluid">
       <div class="row">
-        <div class="col" ref="main_reader" cols="8">
+        <div class="col" ref="main_reader">
           <VueShowdown :markdown="content" flavor="github" :extensions="['showdown-katex', special_link_local]" @click.native="performReference" />
         </div>
-        <div class="col" v-if="show_reference" ref="ref_reader" cols="5">
+        <div class="col" v-if="show_reference" ref="ref_reader">
+          <b-card>
           <template v-for="(reference, index) in content_references">
             <VueShowdown :key="index" :markdown="reference" flavor="github" :extensions="['showdown-katex', special_link_local]" />
           </template>
+          </b-card>
         </div>
       </div>
       <b-button @click="onRefer" >参考</b-button>
-    </b-container>
+    </div>
   </div>
 </template>
 
@@ -50,13 +52,7 @@ export default {
 ||\\textbf{x}−\\textbf{a}_1||_2^2 =d_1^2, ||\\textbf{x}−\\textbf{a}_2||_2^2 =d_2^2, ||\\textbf{x}−\\textbf{a}_3||_2^2 =d^2_3 \\ \\ \\ (5.1)\n\
 ```\n\
 ![2](image/2.jpg)",
-      content_references: ["## 5.1 线性方程组的直接解法\n\
-### 5.1.1 线性方程组问题\n\
-在工程问题中，线性方程组描述了变量之间最基本的关系。线性方程在各个科学分支中无处不在，例如弹性力学、电阻网络、曲线拟合等。线性方程构成了线性代数的核心并时常作为 优化问题的约束条件。由于许多优化算法的迭代过程非常依赖线性方程组的解，所以它也是许 多优化算法的基础。下面我们以一个例子来说明，线性方程组如何解决上面的问题。\n\
-**例5.1.1.** *(*三点测距问题*)*三角测量是一种确定点位置的方法，给定距离到已知控制点*(*锚点*)*，三边测量可以应用于许多不同的领域，如地理测绘、地震学、导航(例如 *GPS* 系统)等。 在图*5.2*中，三个测距点 $$a_1, a_2, a_3 \\in \\mathbb{R}^2$$ 的坐标是已知的，并且从点 $$\\textbf{x} = (x_1, x_2)^T$$ 到测距点的距离为 $$d_1, d_2, d_3$$，$$\\textbf{x}$$ 的未知坐标与距离测量有关，可以由下面非线性方程组描述\n\
-```latex\n\
-||\\textbf{x}−\\textbf{a}_1||_2^2 =d_1^2, ||\\textbf{x}−\\textbf{a}_2||_2^2 =d_2^2, ||\\textbf{x}−\\textbf{a}_3||_2^2 =d^2_3 \\ \\ \\ (5.1)\n\
-```\n"],
+      content_references: ["A reference!"],
       show_reference: false,
       md_url: "",
       special_link_local: () => special_link
@@ -96,8 +92,30 @@ export default {
       if(target != undefined && target.tagName == "A"){
         if(target.getAttribute("class") == "reference"){
           let word_id = target.getAttribute("href");
-          this.getReference(word_id, function(refbook_list){
-
+          let that = this;
+          this.getReference(word_id, function(refbook_list_origin){
+            let refbook_list = refbook_list_origin.data;
+            console.log(refbook_list);
+            let mod_refbook_list = []
+            refbook_list.forEach(element => {
+              if(element != that.uuid){
+                mod_refbook_list.push(element);
+              }
+            });
+            let inner_url = that.getHostUrl() + ":5000/file/get_md_lines/";
+            let inner_body = {
+              book_list: mod_refbook_list
+            }
+            console.log(inner_body)
+            that.axios.post(inner_url, inner_body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(inner_response => {
+              if(inner_response.data && inner_response.status == 200){
+                let ref_docs = inner_response.data.data;
+                for(let key in ref_docs){
+                  that.content_references.push(ref_docs[key]);
+                }
+                console.log(that.content_references)
+              }
+            })
           });
         }
       }
@@ -107,10 +125,14 @@ export default {
       console.log("!111");
     },
     getReference(word_id, callback) {
-      let url = this.getHostUrl() + ":5000/read/search?book_id=" + this.uuid + "&word_id=" + word_id;
-      this.axios.get(url).then(response => {
+      let url = this.getHostUrl() + ":5000/read/search/";
+      let body = {
+        file_id: this.uuid,
+        word_id: word_id
+      }
+      this.axios.post(url, body).then(response => {
         if(response.data && response.status == 200){
-          callback(response.data);
+          callback(response.data)
         }
       })
     }
