@@ -223,7 +223,7 @@ def get_md():
     return read_str(book_path), 200
 
 
-@bp.route('/get_md_lines/', methods=["GET, POST, OPTIONS"])
+@bp.route('/get_md_lines/', methods=["GET", "POST", "OPTIONS"])
 @user.public.login_required
 def get_md_lines():
     try:
