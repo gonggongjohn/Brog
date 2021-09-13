@@ -20,16 +20,12 @@ bp = Blueprint(
 @bp.route('/search/', methods=["GET", "POST"])
 @user.public.login_required
 def search():
-    try:
-        data = json.dumps(request.get_data(as_text=True))
-        word_id, file_id = data["word_id"], data["file_id"]
-        wordObj = db.session.query(SearchWord).filter_by(id=word_id).first()
-        otherWordObjs = db.session.query(SearchWord).filter_by(
-            spelling=wordObj.spelling).all()
-        responseData = list([x.fromFile for x in otherWordObjs])
-        responseData.remove(file_id)
-    except:
-        pass
+    data = json.dumps(request.get_data(as_text=True))
+    word_id, file_id = data["word_id"], data["file_id"]
+    wordObj = db.session.query(SearchWord).filter_by(id=word_id).first()
+    otherWordObjs = db.session.query(SearchWord).filter_by(
+        spelling=wordObj.spelling).all()
+    responseData = list(map(lambda x: x.fromFile, list(otherWordObjs)))
     return json.dumps({
         "data": responseData,
         "status": 200
