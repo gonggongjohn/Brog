@@ -19,7 +19,7 @@ def pdf_to_xml(pdf_path, xml_path):
     return lambda: os.system('python %s -o %s %s' % (SCRIPT_DIR, xml_path, pdf_path))
 
 
-def markdown_bold_to_link(md_name, put_to_database: function):
+def markdown_bold_to_link(md_name, put_to_database):
     mdStr = ""
     with open(os.path.join(FILE_DIR, "md", md_name), 'r') as f:
         if f:
