@@ -228,14 +228,14 @@ def get_md():
 def get_md_lines():
     try:
         data = json.loads(request.get_data(as_text=True))
-        book_list = data["book_list"]
+        book_list = list(data["book_list"])
     except:
-        book_list = request.values.get("book_list")
+        book_list = list(request.values.get("book_list"))
 
     def read_str(book_path):
         ret = ""
         with open(book_path, "r") as f:
-            ret = "".join(f.readlines(5))
+            ret = f.readline()[0:20]
         return ret
 
     ret = {}
