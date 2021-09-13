@@ -26,7 +26,8 @@ def search():
         wordObj = db.session.query(SearchWord).filter_by(id=word_id).first()
         otherWordObjs = db.session.query(SearchWord).filter_by(
             spelling=wordObj.spelling).all()
-        responseData = [x.fromFile for x in otherWordObjs]
+        responseData = list([x.fromFile for x in otherWordObjs])
+        responseData.remove(file_id)
     except:
         pass
     return json.dumps({
