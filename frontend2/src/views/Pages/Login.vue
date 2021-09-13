@@ -6,9 +6,8 @@
         <div class="header-body text-center mb-7">
           <b-row class="justify-content-center">
             <b-col xl="5" lg="6" md="8" class="px-5">
-              <h1 class="text-white">Welcome!</h1>
-              <p class="text-lead text-white">Use these awesome forms to login or create new account in your project for
-                free.</p>
+              <h1 class="text-white">Brog 书蛙</h1>
+              <p class="text-lead text-white">极致流畅的阅读体验，专为您呈现！</p>
             </b-col>
           </b-row>
         </div>
