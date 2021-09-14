@@ -78,7 +78,7 @@ def upload():
             def put_to_database(word):
                 from read.models import SearchWord
                 sql_word = SearchWord(id=''.join(choices(string.ascii_letters + string.digits, k=80)),
-                                      spelling=word, fromFile=sql_file.id)
+                                      spelling=word, fromFile=sql_file.id, major=0)
                 for x in range(5):
                     try:
                         db.session.add(sql_word)
@@ -229,11 +229,8 @@ def get_md_lines():
     try:
         print(request.get_data(as_text=True))
         data = json.loads(request.get_data(as_text=True))
-        print(data)
-        print("1235235")
         book_list = data["book_list"]
     except:
-        print("!353523152")
         book_list = request.values.get("book_list")
 
     def read_str(book_path):
@@ -241,7 +238,7 @@ def get_md_lines():
         with open(book_path, "r") as f:
             line = f.readline()
             cnt = 0
-            while line and cnt <= 10:
+            while line and cnt <= 30:
                 ret = ret + line
                 cnt += 1
                 line = f.readline()
@@ -252,12 +249,15 @@ def get_md_lines():
     for book_id in book_list:
         try:
             book_obj = db.session.query(File).filter_by(id=book_id).first()
-            book_filename = book_obj.filename.removesuffix(
-                "." + book_obj.suffix)
+            book_filename = book_obj.filename
+            # book_filename = book_obj.filename.removesuffix(
+            #    "." + book_obj.suffix)
+            print(book_filename)
             book_path = os.path.join(FILE_DIR, "md", "(%s)-%s" %
                                      (book_id, book_filename))
             ret[book_filename] = read_str(book_path)
-        except:
+        except Exception as e:
+            print(e)
             pass
     return json.dumps({
         "data": ret,

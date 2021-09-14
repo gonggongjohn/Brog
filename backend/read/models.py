@@ -10,3 +10,4 @@ class SearchWord(db.Model):
     spelling = Column(String(50))
     fromFile = Column(String(50), ForeignKey(
         'file.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=True)
+    major = Column(Integer)

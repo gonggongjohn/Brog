@@ -51,6 +51,7 @@ def register():
     user_obj = User(
         name=data['username'],
         pwd=data['password'],
+        major = data['major'],
         ip=request.environ.get('HTTP_X_REAL_IP', request.remote_addr),
         id=''.join(choices(string.ascii_letters + string.digits, k=50))
     )
@@ -68,6 +69,7 @@ def register():
     session.update({
         'user_id': user_obj.id,
         'token': user_obj.token,
+        'major': user_obj.major,
         'ip': user_obj.ip,
     })
     session.modified = True

@@ -7,6 +7,7 @@ import os
 import user.public
 from ext import db
 from read.models import *
+from user.models import *
 
 bp = Blueprint(
     name='read',
@@ -26,7 +27,15 @@ def search():
         wordObj = db.session.query(SearchWord).filter_by(id=word_id).first()
         otherWordObjs = db.session.query(SearchWord).filter_by(
             spelling=wordObj.spelling).all()
-        responseData = list(map(lambda x: x.fromFile, list(otherWordObjs)))
+        user_id = session["user_id"]
+        user_obj = db.session.query(User).filter_by(id=user_id).first()
+        responseData = []
+        for obj in otherWordObjs:
+            print(obj.major == 0)
+            if obj.major == 0 or obj.major == user_obj.major:
+                responseData.append(obj.fromFile)
+                print("Appended!")
+        # responseData = list(map(lambda x: x.fromFile, list(otherWordObjs)))
     except:
         responseData = list()
     return json.dumps({

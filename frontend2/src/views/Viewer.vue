@@ -3,14 +3,16 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col" ref="main_reader">
+          <b-card>
           <VueShowdown :markdown="content" flavor="github" :extensions="['showdown-katex', special_link_local]" @click.native="performReference" />
+          </b-card>
         </div>
         <div class="col" v-if="show_reference" ref="ref_reader">
-          <b-card>
           <template v-for="(reference, index) in content_references">
+            <b-card :key="index + '_card'" style="margin-bottom: 10px">
             <VueShowdown :key="index" :markdown="reference" flavor="github" :extensions="['showdown-katex', special_link_local]" />
+            </b-card>
           </template>
-          </b-card>
         </div>
       </div>
       <b-button @click="onRefer" >参考</b-button>
@@ -52,7 +54,7 @@ export default {
 ||\\textbf{x}−\\textbf{a}_1||_2^2 =d_1^2, ||\\textbf{x}−\\textbf{a}_2||_2^2 =d_2^2, ||\\textbf{x}−\\textbf{a}_3||_2^2 =d^2_3 \\ \\ \\ (5.1)\n\
 ```\n\
 ![2](image/2.jpg)",
-      content_references: ["A reference!"],
+      content_references: ["参考界面"],
       show_reference: false,
       md_url: "",
       special_link_local: () => special_link
@@ -109,11 +111,14 @@ export default {
             console.log(inner_body)
             that.axios.post(inner_url, inner_body, {headers: {'Content-Type': 'application/x-www-form-urlencoded'}}).then(inner_response => {
               if(inner_response.data && inner_response.status == 200){
+                console.log(inner_response.data)
                 let ref_docs = inner_response.data.data;
                 for(let key in ref_docs){
                   that.content_references.push(ref_docs[key]);
                 }
+                that.show_reference = false
                 console.log(that.content_references)
+                that.show_reference = true
               }
             })
           });

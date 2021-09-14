@@ -53,8 +53,6 @@
                               v-model="model.username">
                   </base-input>
 
-
-
                   <base-input alternative
                               class="mb-3"
                               prepend-icon="ni ni-lock-circle-open"
@@ -66,6 +64,9 @@
                   </base-input>
                   <div class="text-muted font-italic"><small>password strength: <span
                     class="text-success font-weight-700">strong</span></small></div>
+
+                  <b-form-select v-model="model.major" :options="major_options"></b-form-select>
+
                   <b-row class=" my-4">
                     <b-col cols="12">
                       <base-input :rules="{ required: { allowFalse: false } }" name=Privacy Policy>
@@ -96,8 +97,31 @@
         model: {
           username: '',
           password: '',
+          major: 0,
           agree: false
-        }
+        },
+        major_options: [
+          {
+            value: 0,
+            text: '请选择您的专业背景'
+          },
+          {
+            value: 1,
+            text: '数据科学'
+          },
+          {
+            value: 2,
+            text: '生物学'
+          },
+          {
+            value: 3,
+            text: '化学'
+          },
+          {
+            value: 4,
+            text: '管理科学'
+          }
+        ]
       }
     },
     methods: {
@@ -117,9 +141,6 @@
       onSubmit() {
         // this will be called only after form is valid. You can do an api call here to register users
         let url = this.getHostUrl() + ':5000/user/register/';
-        console.log(this.model.username)
-        console.log(this.model.password)
-        console.log(this.model.agree)
         this.axios.post(url, this.model).then((response) => {
           if(response.data != undefined){
             if(response.data.status == '200'){
