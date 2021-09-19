@@ -12,7 +12,7 @@ The repository of the project is partitioned into four parts, namely *Frontend*,
 
 If you have any question on this project, you can open an issue directly in this repository, or contact us by email: 
 
-Y-jiji: 
+Y-jiji: y-jiji@qq.com
 
 GONGGONGJOHN: gonggongjohn@163.com
 
